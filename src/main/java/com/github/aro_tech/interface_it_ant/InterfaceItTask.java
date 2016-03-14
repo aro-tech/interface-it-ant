@@ -5,6 +5,7 @@ package com.github.aro_tech.interface_it_ant;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tools.ant.BuildException;
@@ -24,6 +25,7 @@ import org.interfaceit.util.FileUtils;
 public class InterfaceItTask extends Task {
 	private String sourceArchivePath;
 	private String delegateClass;
+	private String sourceTextFilePath;
 
 	/*
 	 * (non-Javadoc)
@@ -52,23 +54,39 @@ public class InterfaceItTask extends Task {
 	protected ArgumentNameSource makeArgumentNameSource() throws IOException, ClassNotFoundException {
 		LookupArgumentNameSource nameSource = new LookupArgumentNameSource();
 		File archiveFile = getArchiveFile();
+		List<String> sourceLines = new ArrayList<>();
 		if (null != archiveFile && archiveFile.exists()) {
-			List<String> sourceLines = new FileUtils().readFilesInZipArchive(archiveFile,
+			sourceLines = new FileUtils().readFilesInZipArchive(archiveFile,
 					this.getDelegateClassObject().getName().replace('.', '/') + ".java");
-			new SourceLineReadingArgumentNameLoader().parseAndLoad(sourceLines, nameSource);
-			return nameSource;
+			
+		} else {
+			File textFile = getTextFile();
+			if (null != textFile && textFile.exists()) {
+				sourceLines = new FileUtils().readTrimmedLinesFromFilePath(textFile.toPath());
+				new SourceLineReadingArgumentNameLoader().parseAndLoad(sourceLines, nameSource);
+			}
 		}
-		return new ArgumentNameSource() {
-		};
+		if(!sourceLines.isEmpty()) {
+			new SourceLineReadingArgumentNameLoader().parseAndLoad(sourceLines, nameSource);			
+		}
+		return nameSource;
 	}
 
 
+	private File getTextFile() {
+		return getFile(this.getSourceTextFilePath());
+	}
+
 	private File getArchiveFile() {
-		if(null == this.getSourceArchivePath()) {
+		return getFile(this.getSourceArchivePath());
+	}
+
+	
+	private File getFile(String pathStr) {
+		if(null == pathStr) {
 			return null;
 		}
-		File archiveFile = new File(this.getSourceArchivePath());
-		return archiveFile;
+		return new File(pathStr);
 	}
 
 	private String getTargetPackageName() {
@@ -123,5 +141,21 @@ public class InterfaceItTask extends Task {
 	public String getDelegateClass() {
 		return delegateClass;
 	}
+
+	/**
+	 * @return the sourceTextFilePath
+	 */
+	public String getSourceTextFilePath() {
+		return sourceTextFilePath;
+	}
+
+	/**
+	 * @param sourceTextFilePath the sourceTextFilePath to set
+	 */
+	public void setSourceTextFilePath(String sourceTextFilePath) {
+		this.sourceTextFilePath = sourceTextFilePath;
+	}
+
+	
 
 }

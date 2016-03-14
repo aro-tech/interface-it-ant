@@ -50,6 +50,19 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		assertThat(result.getArgumentNameFor(method, 0)).isEqualTo("classToMock");
 	}
 
+	@Test
+	public void should_construct_argument_name_source_from_text_file_INTEGRATION()
+			throws NoSuchMethodException, SecurityException, ClassNotFoundException, IOException {
+		underTest.setDelegateClass(java.net.URLEncoder.class.getName());
+
+		String path = this.getClass().getClassLoader().getResource("exampleSrc.txt").toExternalForm().substring(6);
+		underTest.setSourceTextFilePath(path);
+
+		ArgumentNameSource result = underTest.makeArgumentNameSource();
+		Method method = java.net.URLEncoder.class.getMethod("encode", String.class);
+		assertThat(result.getArgumentNameFor(method, 0)).isEqualTo("stringToEncode");
+	}
+
 	// @Test
 	// public void testMakeInterfaceItGenerator() {
 	// fail("Not yet implemented");
