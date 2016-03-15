@@ -26,6 +26,10 @@ public class InterfaceItTask extends Task {
 	private String sourceArchivePath;
 	private String delegateClass;
 	private String sourceTextFilePath;
+	private String outputSourceRootDirectory;
+	private String targetInterfaceName;
+	private String targetPackageName;
+	private int indentationSpaces;
 
 	/*
 	 * (non-Javadoc)
@@ -47,9 +51,25 @@ public class InterfaceItTask extends Task {
 		}
 	}
 
-	private int getIndentationSpaces() {
-		return 0;
+
+
+	/**
+	 * @return the indentationSpaces
+	 */
+	public int getIndentationSpaces() {
+		return indentationSpaces;
 	}
+
+
+
+	/**
+	 * @param indentationSpaces the indentationSpaces to set
+	 */
+	public void setIndentationSpaces(int indentationSpaces) {
+		this.indentationSpaces = indentationSpaces;
+	}
+
+
 
 	protected ArgumentNameSource makeArgumentNameSource() throws IOException, ClassNotFoundException {
 		LookupArgumentNameSource nameSource = new LookupArgumentNameSource();
@@ -58,7 +78,7 @@ public class InterfaceItTask extends Task {
 		if (null != archiveFile && archiveFile.exists()) {
 			sourceLines = new FileUtils().readFilesInZipArchive(archiveFile,
 					this.getDelegateClassObject().getName().replace('.', '/') + ".java");
-			
+
 		} else {
 			File textFile = getTextFile();
 			if (null != textFile && textFile.exists()) {
@@ -66,12 +86,11 @@ public class InterfaceItTask extends Task {
 				new SourceLineReadingArgumentNameLoader().parseAndLoad(sourceLines, nameSource);
 			}
 		}
-		if(!sourceLines.isEmpty()) {
-			new SourceLineReadingArgumentNameLoader().parseAndLoad(sourceLines, nameSource);			
+		if (!sourceLines.isEmpty()) {
+			new SourceLineReadingArgumentNameLoader().parseAndLoad(sourceLines, nameSource);
 		}
 		return nameSource;
 	}
-
 
 	private File getTextFile() {
 		return getFile(this.getSourceTextFilePath());
@@ -81,28 +100,36 @@ public class InterfaceItTask extends Task {
 		return getFile(this.getSourceArchivePath());
 	}
 
-	
 	private File getFile(String pathStr) {
-		if(null == pathStr) {
+		if (null == pathStr) {
 			return null;
 		}
 		return new File(pathStr);
-	}
-
-	private String getTargetPackageName() {
-		return null;
 	}
 
 	private Class<?> getDelegateClassObject() throws ClassNotFoundException {
 		return Class.forName(this.getDelegateClass());
 	}
 
-	private String getTargetInterfaceName() {
-		return null;
+	
+
+	/**
+	 * @return the targetInterfaceName
+	 */
+	public String getTargetInterfaceName() {
+		return targetInterfaceName;
+	}
+
+	/**
+	 * @param targetInterfaceName the targetInterfaceName to set
+	 */
+	public void setTargetInterfaceName(String targetInterfaceName) {
+		this.targetInterfaceName = targetInterfaceName;
 	}
 
 	private File getOutputDirectory() {
-		return null;
+		return new File(
+				this.getOutputSourceRootDirectory() + "/" + this.getDelegateClass().replace('.', '/') + ".java");
 	}
 
 	private void validateAttributes() throws BuildException {
@@ -150,12 +177,41 @@ public class InterfaceItTask extends Task {
 	}
 
 	/**
-	 * @param sourceTextFilePath the sourceTextFilePath to set
+	 * @param sourceTextFilePath
+	 *            the sourceTextFilePath to set
 	 */
 	public void setSourceTextFilePath(String sourceTextFilePath) {
 		this.sourceTextFilePath = sourceTextFilePath;
 	}
 
-	
+	/**
+	 * @return the outputSourceRootDirectory
+	 */
+	public String getOutputSourceRootDirectory() {
+		return outputSourceRootDirectory;
+	}
 
+	/**
+	 * @param outputSourceRootDirectory
+	 *            the outputSourceRootDirectory to set
+	 */
+	public void setOutputSourceRootDirectory(String outputSourceRootDirectory) {
+		this.outputSourceRootDirectory = outputSourceRootDirectory;
+	}
+
+	/**
+	 * @return the targetPackageName
+	 */
+	public String getTargetPackageName() {
+		return targetPackageName;
+	}
+
+	/**
+	 * @param targetPackageName the targetPackageName to set
+	 */
+	public void setTargetPackageName(String targetPackageName) {
+		this.targetPackageName = targetPackageName;
+	}
+
+	
 }
