@@ -13,10 +13,10 @@ public class InterfaceItArguments {
 	private final String outputPackage;
 	private final String delegateClassName;
 	private final String targetInterfaceName;
-	private final int indentationSpaces;
+	private final Integer indentationSpaces;
 
 	public InterfaceItArguments(File outputRootDir, String outputPackage, String delegateClassName,
-			String targetInterfaceName, int indentationSpaces) {
+			String targetInterfaceName, Integer indentationSpaces) {
 		this.outputRootDir = outputRootDir;
 		this.outputPackage = outputPackage;
 		this.delegateClassName = delegateClassName;
@@ -55,7 +55,7 @@ public class InterfaceItArguments {
 	/**
 	 * @return the indentationSpaces
 	 */
-	public int getIndentationSpaces() {
+	public Integer getIndentationSpaces() {
 		return indentationSpaces;
 	}
 

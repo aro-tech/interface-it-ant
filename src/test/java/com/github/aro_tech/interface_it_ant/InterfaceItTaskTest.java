@@ -89,20 +89,42 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 				eq(mockNameSource), eq(iiArguments.getIndentationSpaces()));
 	}
 
+	@Test
+	public void should_call_generator_using_default_indentation_when_not_specified() throws IOException {
+		InterfaceItArguments iiArguments = setUpArguments(null);
+		setArguments(iiArguments, underTestWithMocks);
+
+		underTestWithMocks.execute();
+
+		File saveDir = makeSaveDirectoryFile(iiArguments.getOutputRootDir().getAbsolutePath(),
+				iiArguments.getDelegateClassName());
+		verify(mockGenerator).generateClassToFile(argThat(new FileMatcher(saveDir.getAbsolutePath())),
+				eq(iiArguments.getTargetInterfaceName()), eq(Math.class), eq(iiArguments.getOutputPackage()),
+				eq(mockNameSource), eq(InterfaceItTask.DEFAULT_INDENTATION_SPACES));
+	}
+	
 	private InterfaceItArguments setUpIIArguments() {
+		Integer indentationSpaces = 6;
+		return setUpArguments(indentationSpaces);
+	}
+
+	/**
+	 * @param indentationSpaces
+	 * @return
+	 */
+	private InterfaceItArguments setUpArguments(Integer indentationSpaces) {
 		String rootPath = "./dummySourceRoot";
 		File outputRootDir = new File(rootPath);
 		String outputPackage = "org.example.test";
 		String delegateClassName = "java.lang.Math";
 		String targetInterfaceName = "MyMath";
-		int indentationSpaces = 6;
 		InterfaceItArguments iiArguments = groupIIArguments(outputRootDir, outputPackage, delegateClassName,
 				targetInterfaceName, indentationSpaces);
 		return iiArguments;
 	}
 
 	private InterfaceItArguments groupIIArguments(File outputRootDir, String outputPackage, String delegateClassName,
-			String targetInterfaceName, int indentationSpaces) {
+			String targetInterfaceName, Integer indentationSpaces) {
 		InterfaceItArguments iiArguments = new InterfaceItArguments(outputRootDir, outputPackage, delegateClassName,
 				targetInterfaceName, indentationSpaces);
 		return iiArguments;
@@ -112,7 +134,10 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		underTestToUse.setOutputSourceRootDirectory(parameterObject.getOutputRootDir().getAbsolutePath());
 		underTestToUse.setDelegateClass(parameterObject.getDelegateClassName());
 		underTestToUse.setTargetInterfaceName(parameterObject.getTargetInterfaceName());
-		underTestToUse.setIndentationSpaces(parameterObject.getIndentationSpaces());
+		Integer indentationSpaces = parameterObject.getIndentationSpaces();
+		if(null != indentationSpaces) {
+			underTestToUse.setIndentationSpaces(indentationSpaces);
+		}
 		underTestToUse.setTargetPackageName(parameterObject.getOutputPackage());
 	}
 

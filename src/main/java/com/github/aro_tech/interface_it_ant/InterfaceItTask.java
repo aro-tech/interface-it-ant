@@ -23,13 +23,15 @@ import org.interfaceit.util.FileUtils;
  *
  */
 public class InterfaceItTask extends Task {
+	public static final int DEFAULT_INDENTATION_SPACES = 4;
+	
 	private String sourceArchivePath;
 	private String delegateClass;
 	private String sourceTextFilePath;
 	private String outputSourceRootDirectory;
 	private String targetInterfaceName;
 	private String targetPackageName;
-	private int indentationSpaces;
+	private int indentationSpaces = DEFAULT_INDENTATION_SPACES;
 
 	/*
 	 * (non-Javadoc)
