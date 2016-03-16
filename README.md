@@ -13,9 +13,9 @@ TODO
 
 ##Roadmap and future directions:
 
-###v0.1.0
+###v0.7.0
 
- * Running implementation
+ * Running implementation based on interface-it 0.7.0
  
 
 ##Blog
