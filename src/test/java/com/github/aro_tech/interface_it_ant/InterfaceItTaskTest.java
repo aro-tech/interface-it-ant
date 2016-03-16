@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.apache.tools.ant.BuildException;
 import org.interfaceit.ClassCodeGenerator;
 import org.interfaceit.meta.arguments.ArgumentNameSource;
 import org.junit.Before;
@@ -20,6 +21,12 @@ import com.github.aro_tech.interface_it_ant.wrappers.Mockito;
  *
  */
 public class InterfaceItTaskTest implements AssertJ, Mockito {
+	private static final String NON_EXISTENT_CLASS_WITH_NO_PACKAGE_NAME = "NonExistentClassWithNoPackageName";
+	private static final String NON_EXISTENT_CLASS_NAME = "org.bogus.DoesNotExist";
+	private static final String TEST_TARGET_INTERFACE_NAME = "MyMath";
+	private static final String TEST_DELEGATE_CLASS_NAME = "java.lang.Math";
+	private static final String TEST_OUTPUT_PACKAGE = "org.example.test";
+	private static final String DUMMY_SOURCE_ROOT = "./dummySourceRoot";
 	InterfaceItTask underTest;
 	ClassCodeGenerator mockGenerator = mock(ClassCodeGenerator.class);
 	ArgumentNameSource mockNameSource = mock(ArgumentNameSource.class);
@@ -102,7 +109,71 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 				eq(iiArguments.getTargetInterfaceName()), eq(Math.class), eq(iiArguments.getOutputPackage()),
 				eq(mockNameSource), eq(InterfaceItTask.DEFAULT_INDENTATION_SPACES));
 	}
+
+	@Test
+	public void should_throw_build_exception_if_delegate_class_not_found() {
+		InterfaceItArguments iiArguments = groupIIArguments(new File(DUMMY_SOURCE_ROOT), TEST_OUTPUT_PACKAGE,
+				NON_EXISTENT_CLASS_NAME, TEST_TARGET_INTERFACE_NAME, null);
+		setArguments(iiArguments, underTestWithMocks);
+		verifyBuildException(executeReturningExpectedBuildException(), "not found", NON_EXISTENT_CLASS_NAME);
+	}
+
+	@Test
+	public void should_remind_about_need_for_delegate_class_package() {
+		InterfaceItArguments iiArguments = groupIIArguments(new File(DUMMY_SOURCE_ROOT), TEST_OUTPUT_PACKAGE,
+				NON_EXISTENT_CLASS_WITH_NO_PACKAGE_NAME, TEST_TARGET_INTERFACE_NAME, null);
+		setArguments(iiArguments, underTestWithMocks);
+		verifyBuildException(executeReturningExpectedBuildException(), "not found",
+				NON_EXISTENT_CLASS_WITH_NO_PACKAGE_NAME, "fully qualified", "package name");
+	}
+
+	@Test
+	public void should_throw_build_exception_if_delegate_class_name_not_provided() {
+		InterfaceItArguments iiArguments = groupIIArguments(new File(DUMMY_SOURCE_ROOT), TEST_OUTPUT_PACKAGE,
+				null /* class name not provided */, TEST_TARGET_INTERFACE_NAME, null);
+		setArguments(iiArguments, underTestWithMocks);
+		verifyBuildException(executeReturningExpectedBuildException(),
+				"A value is required for the attribute 'delegateClass'");
+	}
+
+	@Test
+	public void should_throw_build_exception_if_delegate_class_name_is_blank() {
+		InterfaceItArguments iiArguments = groupIIArguments(new File(DUMMY_SOURCE_ROOT), TEST_OUTPUT_PACKAGE,
+				" " /* class name is a blank space */, TEST_TARGET_INTERFACE_NAME, null);
+		setArguments(iiArguments, underTestWithMocks);
+		verifyBuildException(executeReturningExpectedBuildException(),
+				"A value is required for the attribute 'delegateClass'");
+	}
+
+	@Test
+	public void should_throw_build_exception_if_output_directory_not_provided() {
+		InterfaceItArguments iiArguments = groupIIArguments(null, TEST_OUTPUT_PACKAGE, NON_EXISTENT_CLASS_NAME,
+				TEST_TARGET_INTERFACE_NAME, null);
+		setArguments(iiArguments, underTestWithMocks);
+		verifyBuildException(executeReturningExpectedBuildException(), "'outputSourceRootDirectory'",
+				"value is required");
+	}
+
+	// TODO: verify message for blank outputSourceRootDirectory
+	// TODO: warning for insufficient source info
+	// TODO: verify missing/blank targetInterfaceName
+	// TODO: warn for missing targetPackageName 
 	
+	
+	private void verifyBuildException(BuildException thrown, String... expectedMessages) {
+		assertThat(thrown).isNotNull();
+		assertThat(thrown.getMessage()).contains(expectedMessages);
+	}
+
+	private BuildException executeReturningExpectedBuildException() {
+		try {
+			underTestWithMocks.execute();
+		} catch (BuildException e) {
+			return e;
+		}
+		return null;
+	}
+
 	private InterfaceItArguments setUpIIArguments() {
 		Integer indentationSpaces = 6;
 		return setUpArguments(indentationSpaces);
@@ -113,13 +184,8 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 	 * @return
 	 */
 	private InterfaceItArguments setUpArguments(Integer indentationSpaces) {
-		String rootPath = "./dummySourceRoot";
-		File outputRootDir = new File(rootPath);
-		String outputPackage = "org.example.test";
-		String delegateClassName = "java.lang.Math";
-		String targetInterfaceName = "MyMath";
-		InterfaceItArguments iiArguments = groupIIArguments(outputRootDir, outputPackage, delegateClassName,
-				targetInterfaceName, indentationSpaces);
+		InterfaceItArguments iiArguments = groupIIArguments(new File(DUMMY_SOURCE_ROOT), TEST_OUTPUT_PACKAGE,
+				TEST_DELEGATE_CLASS_NAME, TEST_TARGET_INTERFACE_NAME, indentationSpaces);
 		return iiArguments;
 	}
 
@@ -131,14 +197,21 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 	}
 
 	private void setArguments(InterfaceItArguments parameterObject, InterfaceItTask underTestToUse) {
-		underTestToUse.setOutputSourceRootDirectory(parameterObject.getOutputRootDir().getAbsolutePath());
+		setOutputRootDir(parameterObject, underTestToUse);
 		underTestToUse.setDelegateClass(parameterObject.getDelegateClassName());
 		underTestToUse.setTargetInterfaceName(parameterObject.getTargetInterfaceName());
 		Integer indentationSpaces = parameterObject.getIndentationSpaces();
-		if(null != indentationSpaces) {
+		if (null != indentationSpaces) {
 			underTestToUse.setIndentationSpaces(indentationSpaces);
 		}
 		underTestToUse.setTargetPackageName(parameterObject.getOutputPackage());
+	}
+
+	private void setOutputRootDir(InterfaceItArguments parameterObject, InterfaceItTask underTestToUse) {
+		File outputRootDir = parameterObject.getOutputRootDir();
+		if(null != outputRootDir) {
+			underTestToUse.setOutputSourceRootDirectory(outputRootDir.getAbsolutePath());			
+		}
 	}
 
 	private File makeSaveDirectoryFile(String rootPath, String delegateClassName) {
@@ -149,7 +222,7 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 	@Test
 	public void should_construct_default_argument_name_source_if_no_source_provided()
 			throws NoSuchMethodException, SecurityException, ClassNotFoundException, IOException {
-		underTest.setDelegateClass("java.lang.Math");
+		underTest.setDelegateClass(TEST_DELEGATE_CLASS_NAME);
 		ArgumentNameSource result = underTest.makeArgumentNameSource();
 		Method method = org.mockito.Mockito.class.getMethod("mock", Class.class);
 		assertThat(result.getArgumentNameFor(method, 0)).isEqualTo("arg0");

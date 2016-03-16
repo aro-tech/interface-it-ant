@@ -24,7 +24,7 @@ import org.interfaceit.util.FileUtils;
  */
 public class InterfaceItTask extends Task {
 	public static final int DEFAULT_INDENTATION_SPACES = 4;
-	
+
 	private String sourceArchivePath;
 	private String delegateClass;
 	private String sourceTextFilePath;
@@ -42,18 +42,36 @@ public class InterfaceItTask extends Task {
 	public void execute() throws BuildException {
 		validateAttributes();
 
-		// System.out.println("Hello, Ant");
 		ClassCodeGenerator generator = makeInterfaceItGenerator();
 
 		try {
 			generator.generateClassToFile(getOutputDirectory(), getTargetInterfaceName(), getDelegateClassObject(),
 					getTargetPackageName(), makeArgumentNameSource(), getIndentationSpaces());
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (IOException e) {
 			throw new BuildException(e);
+		} catch (ClassNotFoundException e) {
+			throw new BuildException(makeMessageForDelegateClasssNotFound(e.getMessage()), e);
 		}
 	}
 
+	private String makeMessageForDelegateClasssNotFound(String msg) {
+		return "Execution of interface-it was interrupted by a ClassNotFoundException. " + "Class not found: " + msg
+				+ System.lineSeparator() + "Please verify the "
+				+ "classpath provided to this ant task and the value of its 'delegateClass' attribute."
+				+ makePackageReminderIfNecessary(msg);
+	}
 
+	/**
+	 * @param msg
+	 * @return
+	 */
+	private String makePackageReminderIfNecessary(String msg) {
+		String packageReminder = "";
+		if (msg.indexOf('.') < 0) {
+			packageReminder = "\nReminder, the 'delegateClass' requires a fully qualified class name, including the package name (for example 'com.example.ExampleDelegateClass').";
+		}
+		return packageReminder;
+	}
 
 	/**
 	 * @return the indentationSpaces
@@ -62,16 +80,13 @@ public class InterfaceItTask extends Task {
 		return indentationSpaces;
 	}
 
-
-
 	/**
-	 * @param indentationSpaces the indentationSpaces to set
+	 * @param indentationSpaces
+	 *            the indentationSpaces to set
 	 */
 	public void setIndentationSpaces(int indentationSpaces) {
 		this.indentationSpaces = indentationSpaces;
 	}
-
-
 
 	protected ArgumentNameSource makeArgumentNameSource() throws IOException, ClassNotFoundException {
 		LookupArgumentNameSource nameSource = new LookupArgumentNameSource();
@@ -113,8 +128,6 @@ public class InterfaceItTask extends Task {
 		return Class.forName(this.getDelegateClass());
 	}
 
-	
-
 	/**
 	 * @return the targetInterfaceName
 	 */
@@ -123,7 +136,8 @@ public class InterfaceItTask extends Task {
 	}
 
 	/**
-	 * @param targetInterfaceName the targetInterfaceName to set
+	 * @param targetInterfaceName
+	 *            the targetInterfaceName to set
 	 */
 	public void setTargetInterfaceName(String targetInterfaceName) {
 		this.targetInterfaceName = targetInterfaceName;
@@ -135,6 +149,13 @@ public class InterfaceItTask extends Task {
 	}
 
 	private void validateAttributes() throws BuildException {
+		if (null == this.delegateClass || delegateClass.trim().length() < 1) {
+			throw new BuildException("A value is required for the attribute 'delegateClass'");
+		}
+		
+		if(null == this.outputSourceRootDirectory) {
+			throw new BuildException("A value is required for the attribute 'outputSourceRootDirectory'");
+		}
 	}
 
 	protected ClassCodeGenerator makeInterfaceItGenerator() {
@@ -209,11 +230,11 @@ public class InterfaceItTask extends Task {
 	}
 
 	/**
-	 * @param targetPackageName the targetPackageName to set
+	 * @param targetPackageName
+	 *            the targetPackageName to set
 	 */
 	public void setTargetPackageName(String targetPackageName) {
 		this.targetPackageName = targetPackageName;
 	}
 
-	
 }
