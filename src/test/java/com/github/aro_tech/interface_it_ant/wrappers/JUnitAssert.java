@@ -23,8 +23,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(boolean[],boolean[])
      * {@link org.junit.Assert#assertArrayEquals(boolean[],boolean[])}
      */
-    default void assertArrayEquals(boolean[] expecteds, boolean[] actuals) {
-        Assert.assertArrayEquals(expecteds, actuals);
+    default void assertArrayEquals(boolean[] arg0, boolean[] arg1) {
+        Assert.assertArrayEquals(arg0, arg1);
     }
 
 
@@ -33,8 +33,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(byte[],byte[])
      * {@link org.junit.Assert#assertArrayEquals(byte[],byte[])}
      */
-    default void assertArrayEquals(byte[] expecteds, byte[] actuals) {
-        Assert.assertArrayEquals(expecteds, actuals);
+    default void assertArrayEquals(byte[] arg0, byte[] arg1) {
+        Assert.assertArrayEquals(arg0, arg1);
     }
 
 
@@ -43,8 +43,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(char[],char[])
      * {@link org.junit.Assert#assertArrayEquals(char[],char[])}
      */
-    default void assertArrayEquals(char[] expecteds, char[] actuals) {
-        Assert.assertArrayEquals(expecteds, actuals);
+    default void assertArrayEquals(char[] arg0, char[] arg1) {
+        Assert.assertArrayEquals(arg0, arg1);
     }
 
 
@@ -53,8 +53,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(int[],int[])
      * {@link org.junit.Assert#assertArrayEquals(int[],int[])}
      */
-    default void assertArrayEquals(int[] expecteds, int[] actuals) {
-        Assert.assertArrayEquals(expecteds, actuals);
+    default void assertArrayEquals(int[] arg0, int[] arg1) {
+        Assert.assertArrayEquals(arg0, arg1);
     }
 
 
@@ -63,8 +63,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(long[],long[])
      * {@link org.junit.Assert#assertArrayEquals(long[],long[])}
      */
-    default void assertArrayEquals(long[] expecteds, long[] actuals) {
-        Assert.assertArrayEquals(expecteds, actuals);
+    default void assertArrayEquals(long[] arg0, long[] arg1) {
+        Assert.assertArrayEquals(arg0, arg1);
     }
 
 
@@ -73,8 +73,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(java.lang.Object[],java.lang.Object[])
      * {@link org.junit.Assert#assertArrayEquals(java.lang.Object[],java.lang.Object[])}
      */
-    default void assertArrayEquals(Object[] expecteds, Object[] actuals) {
-        Assert.assertArrayEquals(expecteds, actuals);
+    default void assertArrayEquals(Object[] arg0, Object[] arg1) {
+        Assert.assertArrayEquals(arg0, arg1);
     }
 
 
@@ -83,8 +83,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(short[],short[])
      * {@link org.junit.Assert#assertArrayEquals(short[],short[])}
      */
-    default void assertArrayEquals(short[] expecteds, short[] actuals) {
-        Assert.assertArrayEquals(expecteds, actuals);
+    default void assertArrayEquals(short[] arg0, short[] arg1) {
+        Assert.assertArrayEquals(arg0, arg1);
     }
 
 
@@ -93,8 +93,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(double[],double[],double)
      * {@link org.junit.Assert#assertArrayEquals(double[],double[],double)}
      */
-    default void assertArrayEquals(double[] expecteds, double[] actuals, double delta) {
-        Assert.assertArrayEquals(expecteds, actuals, delta);
+    default void assertArrayEquals(double[] arg0, double[] arg1, double arg2) {
+        Assert.assertArrayEquals(arg0, arg1, arg2);
     }
 
 
@@ -103,8 +103,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(float[],float[],float)
      * {@link org.junit.Assert#assertArrayEquals(float[],float[],float)}
      */
-    default void assertArrayEquals(float[] expecteds, float[] actuals, float delta) {
-        Assert.assertArrayEquals(expecteds, actuals, delta);
+    default void assertArrayEquals(float[] arg0, float[] arg1, float arg2) {
+        Assert.assertArrayEquals(arg0, arg1, arg2);
     }
 
 
@@ -113,8 +113,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(java.lang.String,boolean[],boolean[]) throws org.junit.internal.ArrayComparisonFailure
      * {@link org.junit.Assert#assertArrayEquals(java.lang.String,boolean[],boolean[])}
      */
-    default void assertArrayEquals(String message, boolean[] expecteds, boolean[] actuals) throws ArrayComparisonFailure {
-        Assert.assertArrayEquals(message, expecteds, actuals);
+    default void assertArrayEquals(String arg0, boolean[] arg1, boolean[] arg2) throws ArrayComparisonFailure {
+        Assert.assertArrayEquals(arg0, arg1, arg2);
     }
 
 
@@ -123,8 +123,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(java.lang.String,byte[],byte[]) throws org.junit.internal.ArrayComparisonFailure
      * {@link org.junit.Assert#assertArrayEquals(java.lang.String,byte[],byte[])}
      */
-    default void assertArrayEquals(String message, byte[] expecteds, byte[] actuals) throws ArrayComparisonFailure {
-        Assert.assertArrayEquals(message, expecteds, actuals);
+    default void assertArrayEquals(String arg0, byte[] arg1, byte[] arg2) throws ArrayComparisonFailure {
+        Assert.assertArrayEquals(arg0, arg1, arg2);
     }
 
 
@@ -133,8 +133,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(java.lang.String,char[],char[]) throws org.junit.internal.ArrayComparisonFailure
      * {@link org.junit.Assert#assertArrayEquals(java.lang.String,char[],char[])}
      */
-    default void assertArrayEquals(String message, char[] expecteds, char[] actuals) throws ArrayComparisonFailure {
-        Assert.assertArrayEquals(message, expecteds, actuals);
+    default void assertArrayEquals(String arg0, char[] arg1, char[] arg2) throws ArrayComparisonFailure {
+        Assert.assertArrayEquals(arg0, arg1, arg2);
     }
 
 
@@ -143,8 +143,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(java.lang.String,int[],int[]) throws org.junit.internal.ArrayComparisonFailure
      * {@link org.junit.Assert#assertArrayEquals(java.lang.String,int[],int[])}
      */
-    default void assertArrayEquals(String message, int[] expecteds, int[] actuals) throws ArrayComparisonFailure {
-        Assert.assertArrayEquals(message, expecteds, actuals);
+    default void assertArrayEquals(String arg0, int[] arg1, int[] arg2) throws ArrayComparisonFailure {
+        Assert.assertArrayEquals(arg0, arg1, arg2);
     }
 
 
@@ -153,8 +153,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(java.lang.String,long[],long[]) throws org.junit.internal.ArrayComparisonFailure
      * {@link org.junit.Assert#assertArrayEquals(java.lang.String,long[],long[])}
      */
-    default void assertArrayEquals(String message, long[] expecteds, long[] actuals) throws ArrayComparisonFailure {
-        Assert.assertArrayEquals(message, expecteds, actuals);
+    default void assertArrayEquals(String arg0, long[] arg1, long[] arg2) throws ArrayComparisonFailure {
+        Assert.assertArrayEquals(arg0, arg1, arg2);
     }
 
 
@@ -163,8 +163,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(java.lang.String,java.lang.Object[],java.lang.Object[]) throws org.junit.internal.ArrayComparisonFailure
      * {@link org.junit.Assert#assertArrayEquals(java.lang.String,java.lang.Object[],java.lang.Object[])}
      */
-    default void assertArrayEquals(String message, Object[] expecteds, Object[] actuals) throws ArrayComparisonFailure {
-        Assert.assertArrayEquals(message, expecteds, actuals);
+    default void assertArrayEquals(String arg0, Object[] arg1, Object[] arg2) throws ArrayComparisonFailure {
+        Assert.assertArrayEquals(arg0, arg1, arg2);
     }
 
 
@@ -173,8 +173,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(java.lang.String,short[],short[]) throws org.junit.internal.ArrayComparisonFailure
      * {@link org.junit.Assert#assertArrayEquals(java.lang.String,short[],short[])}
      */
-    default void assertArrayEquals(String message, short[] expecteds, short[] actuals) throws ArrayComparisonFailure {
-        Assert.assertArrayEquals(message, expecteds, actuals);
+    default void assertArrayEquals(String arg0, short[] arg1, short[] arg2) throws ArrayComparisonFailure {
+        Assert.assertArrayEquals(arg0, arg1, arg2);
     }
 
 
@@ -183,8 +183,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(java.lang.String,double[],double[],double) throws org.junit.internal.ArrayComparisonFailure
      * {@link org.junit.Assert#assertArrayEquals(java.lang.String,double[],double[],double)}
      */
-    default void assertArrayEquals(String message, double[] expecteds, double[] actuals, double delta) throws ArrayComparisonFailure {
-        Assert.assertArrayEquals(message, expecteds, actuals, delta);
+    default void assertArrayEquals(String arg0, double[] arg1, double[] arg2, double arg3) throws ArrayComparisonFailure {
+        Assert.assertArrayEquals(arg0, arg1, arg2, arg3);
     }
 
 
@@ -193,8 +193,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertArrayEquals(java.lang.String,float[],float[],float) throws org.junit.internal.ArrayComparisonFailure
      * {@link org.junit.Assert#assertArrayEquals(java.lang.String,float[],float[],float)}
      */
-    default void assertArrayEquals(String message, float[] expecteds, float[] actuals, float delta) throws ArrayComparisonFailure {
-        Assert.assertArrayEquals(message, expecteds, actuals, delta);
+    default void assertArrayEquals(String arg0, float[] arg1, float[] arg2, float arg3) throws ArrayComparisonFailure {
+        Assert.assertArrayEquals(arg0, arg1, arg2, arg3);
     }
 
 
@@ -204,8 +204,8 @@ public interface JUnitAssert {
      * {@link org.junit.Assert#assertEquals(double,double)}
      */
     @Deprecated
-    default void assertEquals(double expected, double actual) {
-        Assert.assertEquals(expected, actual);
+    default void assertEquals(double arg0, double arg1) {
+        Assert.assertEquals(arg0, arg1);
     }
 
 
@@ -214,8 +214,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertEquals(long,long)
      * {@link org.junit.Assert#assertEquals(long,long)}
      */
-    default void assertEquals(long expected, long actual) {
-        Assert.assertEquals(expected, actual);
+    default void assertEquals(long arg0, long arg1) {
+        Assert.assertEquals(arg0, arg1);
     }
 
 
@@ -224,8 +224,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertEquals(java.lang.Object,java.lang.Object)
      * {@link org.junit.Assert#assertEquals(java.lang.Object,java.lang.Object)}
      */
-    default void assertEquals(Object expected, Object actual) {
-        Assert.assertEquals(expected, actual);
+    default void assertEquals(Object arg0, Object arg1) {
+        Assert.assertEquals(arg0, arg1);
     }
 
 
@@ -235,8 +235,8 @@ public interface JUnitAssert {
      * {@link org.junit.Assert#assertEquals(java.lang.Object[],java.lang.Object[])}
      */
     @Deprecated
-    default void assertEquals(Object[] expecteds, Object[] actuals) {
-        Assert.assertEquals(expecteds, actuals);
+    default void assertEquals(Object[] arg0, Object[] arg1) {
+        Assert.assertEquals(arg0, arg1);
     }
 
 
@@ -245,8 +245,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertEquals(double,double,double)
      * {@link org.junit.Assert#assertEquals(double,double,double)}
      */
-    default void assertEquals(double expected, double actual, double delta) {
-        Assert.assertEquals(expected, actual, delta);
+    default void assertEquals(double arg0, double arg1, double arg2) {
+        Assert.assertEquals(arg0, arg1, arg2);
     }
 
 
@@ -255,8 +255,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertEquals(float,float,float)
      * {@link org.junit.Assert#assertEquals(float,float,float)}
      */
-    default void assertEquals(float expected, float actual, float delta) {
-        Assert.assertEquals(expected, actual, delta);
+    default void assertEquals(float arg0, float arg1, float arg2) {
+        Assert.assertEquals(arg0, arg1, arg2);
     }
 
 
@@ -266,8 +266,8 @@ public interface JUnitAssert {
      * {@link org.junit.Assert#assertEquals(java.lang.String,double,double)}
      */
     @Deprecated
-    default void assertEquals(String message, double actual, double delta) {
-        Assert.assertEquals(message, actual, delta);
+    default void assertEquals(String arg0, double arg1, double arg2) {
+        Assert.assertEquals(arg0, arg1, arg2);
     }
 
 
@@ -276,8 +276,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertEquals(java.lang.String,long,long)
      * {@link org.junit.Assert#assertEquals(java.lang.String,long,long)}
      */
-    default void assertEquals(String message, long expected, long actual) {
-        Assert.assertEquals(message, expected, actual);
+    default void assertEquals(String arg0, long arg1, long arg2) {
+        Assert.assertEquals(arg0, arg1, arg2);
     }
 
 
@@ -286,8 +286,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertEquals(java.lang.String,java.lang.Object,java.lang.Object)
      * {@link org.junit.Assert#assertEquals(java.lang.String,java.lang.Object,java.lang.Object)}
      */
-    default void assertEquals(String message, Object expected, Object actual) {
-        Assert.assertEquals(message, expected, actual);
+    default void assertEquals(String arg0, Object arg1, Object arg2) {
+        Assert.assertEquals(arg0, arg1, arg2);
     }
 
 
@@ -297,8 +297,8 @@ public interface JUnitAssert {
      * {@link org.junit.Assert#assertEquals(java.lang.String,java.lang.Object[],java.lang.Object[])}
      */
     @Deprecated
-    default void assertEquals(String message, Object[] arg1, Object[] arg2) {
-        Assert.assertEquals(message, arg1, arg2);
+    default void assertEquals(String arg0, Object[] arg1, Object[] arg2) {
+        Assert.assertEquals(arg0, arg1, arg2);
     }
 
 
@@ -307,8 +307,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertEquals(java.lang.String,double,double,double)
      * {@link org.junit.Assert#assertEquals(java.lang.String,double,double,double)}
      */
-    default void assertEquals(String message, double expected, double actual, double delta) {
-        Assert.assertEquals(message, expected, actual, delta);
+    default void assertEquals(String arg0, double arg1, double arg2, double arg3) {
+        Assert.assertEquals(arg0, arg1, arg2, arg3);
     }
 
 
@@ -317,8 +317,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertEquals(java.lang.String,float,float,float)
      * {@link org.junit.Assert#assertEquals(java.lang.String,float,float,float)}
      */
-    default void assertEquals(String message, float expected, float actual, float delta) {
-        Assert.assertEquals(message, expected, actual, delta);
+    default void assertEquals(String arg0, float arg1, float arg2, float arg3) {
+        Assert.assertEquals(arg0, arg1, arg2, arg3);
     }
 
 
@@ -327,8 +327,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertFalse(boolean)
      * {@link org.junit.Assert#assertFalse(boolean)}
      */
-    default void assertFalse(boolean condition) {
-        Assert.assertFalse(condition);
+    default void assertFalse(boolean arg0) {
+        Assert.assertFalse(arg0);
     }
 
 
@@ -337,8 +337,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertFalse(java.lang.String,boolean)
      * {@link org.junit.Assert#assertFalse(java.lang.String,boolean)}
      */
-    default void assertFalse(String message, boolean condition) {
-        Assert.assertFalse(message, condition);
+    default void assertFalse(String arg0, boolean arg1) {
+        Assert.assertFalse(arg0, arg1);
     }
 
 
@@ -347,8 +347,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertNotEquals(long,long)
      * {@link org.junit.Assert#assertNotEquals(long,long)}
      */
-    default void assertNotEquals(long unexpected, long actual) {
-        Assert.assertNotEquals(unexpected, actual);
+    default void assertNotEquals(long arg0, long arg1) {
+        Assert.assertNotEquals(arg0, arg1);
     }
 
 
@@ -357,8 +357,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertNotEquals(java.lang.Object,java.lang.Object)
      * {@link org.junit.Assert#assertNotEquals(java.lang.Object,java.lang.Object)}
      */
-    default void assertNotEquals(Object unexpected, Object actual) {
-        Assert.assertNotEquals(unexpected, actual);
+    default void assertNotEquals(Object arg0, Object arg1) {
+        Assert.assertNotEquals(arg0, arg1);
     }
 
 
@@ -367,8 +367,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertNotEquals(double,double,double)
      * {@link org.junit.Assert#assertNotEquals(double,double,double)}
      */
-    default void assertNotEquals(double unexpected, double actual, double delta) {
-        Assert.assertNotEquals(unexpected, actual, delta);
+    default void assertNotEquals(double arg0, double arg1, double arg2) {
+        Assert.assertNotEquals(arg0, arg1, arg2);
     }
 
 
@@ -377,8 +377,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertNotEquals(float,float,float)
      * {@link org.junit.Assert#assertNotEquals(float,float,float)}
      */
-    default void assertNotEquals(float unexpected, float actual, float delta) {
-        Assert.assertNotEquals(unexpected, actual, delta);
+    default void assertNotEquals(float arg0, float arg1, float arg2) {
+        Assert.assertNotEquals(arg0, arg1, arg2);
     }
 
 
@@ -387,8 +387,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertNotEquals(java.lang.String,long,long)
      * {@link org.junit.Assert#assertNotEquals(java.lang.String,long,long)}
      */
-    default void assertNotEquals(String message, long unexpected, long actual) {
-        Assert.assertNotEquals(message, unexpected, actual);
+    default void assertNotEquals(String arg0, long arg1, long arg2) {
+        Assert.assertNotEquals(arg0, arg1, arg2);
     }
 
 
@@ -397,8 +397,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertNotEquals(java.lang.String,java.lang.Object,java.lang.Object)
      * {@link org.junit.Assert#assertNotEquals(java.lang.String,java.lang.Object,java.lang.Object)}
      */
-    default void assertNotEquals(String message, Object unexpected, Object actual) {
-        Assert.assertNotEquals(message, unexpected, actual);
+    default void assertNotEquals(String arg0, Object arg1, Object arg2) {
+        Assert.assertNotEquals(arg0, arg1, arg2);
     }
 
 
@@ -407,8 +407,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertNotEquals(java.lang.String,double,double,double)
      * {@link org.junit.Assert#assertNotEquals(java.lang.String,double,double,double)}
      */
-    default void assertNotEquals(String message, double unexpected, double actual, double delta) {
-        Assert.assertNotEquals(message, unexpected, actual, delta);
+    default void assertNotEquals(String arg0, double arg1, double arg2, double arg3) {
+        Assert.assertNotEquals(arg0, arg1, arg2, arg3);
     }
 
 
@@ -417,8 +417,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertNotEquals(java.lang.String,float,float,float)
      * {@link org.junit.Assert#assertNotEquals(java.lang.String,float,float,float)}
      */
-    default void assertNotEquals(String message, float unexpected, float actual, float delta) {
-        Assert.assertNotEquals(message, unexpected, actual, delta);
+    default void assertNotEquals(String arg0, float arg1, float arg2, float arg3) {
+        Assert.assertNotEquals(arg0, arg1, arg2, arg3);
     }
 
 
@@ -427,8 +427,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertNotNull(java.lang.Object)
      * {@link org.junit.Assert#assertNotNull(java.lang.Object)}
      */
-    default void assertNotNull(Object object) {
-        Assert.assertNotNull(object);
+    default void assertNotNull(Object arg0) {
+        Assert.assertNotNull(arg0);
     }
 
 
@@ -437,8 +437,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertNotNull(java.lang.String,java.lang.Object)
      * {@link org.junit.Assert#assertNotNull(java.lang.String,java.lang.Object)}
      */
-    default void assertNotNull(String message, Object object) {
-        Assert.assertNotNull(message, object);
+    default void assertNotNull(String arg0, Object arg1) {
+        Assert.assertNotNull(arg0, arg1);
     }
 
 
@@ -447,8 +447,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertNotSame(java.lang.Object,java.lang.Object)
      * {@link org.junit.Assert#assertNotSame(java.lang.Object,java.lang.Object)}
      */
-    default void assertNotSame(Object unexpected, Object actual) {
-        Assert.assertNotSame(unexpected, actual);
+    default void assertNotSame(Object arg0, Object arg1) {
+        Assert.assertNotSame(arg0, arg1);
     }
 
 
@@ -457,8 +457,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertNotSame(java.lang.String,java.lang.Object,java.lang.Object)
      * {@link org.junit.Assert#assertNotSame(java.lang.String,java.lang.Object,java.lang.Object)}
      */
-    default void assertNotSame(String message, Object unexpected, Object actual) {
-        Assert.assertNotSame(message, unexpected, actual);
+    default void assertNotSame(String arg0, Object arg1, Object arg2) {
+        Assert.assertNotSame(arg0, arg1, arg2);
     }
 
 
@@ -467,8 +467,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertNull(java.lang.Object)
      * {@link org.junit.Assert#assertNull(java.lang.Object)}
      */
-    default void assertNull(Object object) {
-        Assert.assertNull(object);
+    default void assertNull(Object arg0) {
+        Assert.assertNull(arg0);
     }
 
 
@@ -477,8 +477,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertNull(java.lang.String,java.lang.Object)
      * {@link org.junit.Assert#assertNull(java.lang.String,java.lang.Object)}
      */
-    default void assertNull(String message, Object object) {
-        Assert.assertNull(message, object);
+    default void assertNull(String arg0, Object arg1) {
+        Assert.assertNull(arg0, arg1);
     }
 
 
@@ -487,8 +487,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertSame(java.lang.Object,java.lang.Object)
      * {@link org.junit.Assert#assertSame(java.lang.Object,java.lang.Object)}
      */
-    default void assertSame(Object expected, Object actual) {
-        Assert.assertSame(expected, actual);
+    default void assertSame(Object arg0, Object arg1) {
+        Assert.assertSame(arg0, arg1);
     }
 
 
@@ -497,8 +497,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertSame(java.lang.String,java.lang.Object,java.lang.Object)
      * {@link org.junit.Assert#assertSame(java.lang.String,java.lang.Object,java.lang.Object)}
      */
-    default void assertSame(String message, Object expected, Object actual) {
-        Assert.assertSame(message, expected, actual);
+    default void assertSame(String arg0, Object arg1, Object arg2) {
+        Assert.assertSame(arg0, arg1, arg2);
     }
 
 
@@ -507,8 +507,8 @@ public interface JUnitAssert {
      * Delegate call to public static <T> void org.junit.Assert.assertThat(T,org.hamcrest.Matcher<? super T>)
      * {@link org.junit.Assert#assertThat(java.lang.Object,org.hamcrest.Matcher)}
      */
-    default <T> void assertThat(T actual, Matcher<? super T> matcher) {
-        Assert.assertThat(actual, matcher);
+    default <T> void assertThat(T arg0, Matcher<? super T> arg1) {
+        Assert.assertThat(arg0, arg1);
     }
 
 
@@ -517,8 +517,8 @@ public interface JUnitAssert {
      * Delegate call to public static <T> void org.junit.Assert.assertThat(java.lang.String,T,org.hamcrest.Matcher<? super T>)
      * {@link org.junit.Assert#assertThat(java.lang.String,java.lang.Object,org.hamcrest.Matcher)}
      */
-    default <T> void assertThat(String reason, T actual, Matcher<? super T> matcher) {
-        Assert.assertThat(reason, actual, matcher);
+    default <T> void assertThat(String arg0, T arg1, Matcher<? super T> arg2) {
+        Assert.assertThat(arg0, arg1, arg2);
     }
 
 
@@ -527,8 +527,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertTrue(boolean)
      * {@link org.junit.Assert#assertTrue(boolean)}
      */
-    default void assertTrue(boolean condition) {
-        Assert.assertTrue(condition);
+    default void assertTrue(boolean arg0) {
+        Assert.assertTrue(arg0);
     }
 
 
@@ -537,8 +537,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.assertTrue(java.lang.String,boolean)
      * {@link org.junit.Assert#assertTrue(java.lang.String,boolean)}
      */
-    default void assertTrue(String message, boolean condition) {
-        Assert.assertTrue(message, condition);
+    default void assertTrue(String arg0, boolean arg1) {
+        Assert.assertTrue(arg0, arg1);
     }
 
 
@@ -557,8 +557,8 @@ public interface JUnitAssert {
      * Delegate call to public static void org.junit.Assert.fail(java.lang.String)
      * {@link org.junit.Assert#fail(java.lang.String)}
      */
-    default void fail(String message) {
-        Assert.fail(message);
+    default void fail(String arg0) {
+        Assert.fail(arg0);
     }
 
 

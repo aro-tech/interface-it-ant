@@ -1,0 +1,91 @@
+<project name="interface-it-ant tasks" default="generate-test-fixture-mixins">
+	<!-- REPLACE <YOUR HOME DIRECTORY> here: -->
+	<property name="repository.dir" value="<YOUR HOME DIRECTORY>\.m2\repository" />
+
+	<property name="project.dir" value="." />
+	<property name="output.java.root" value="${project.dir}/src/test/java" />
+	
+	
+	<property name="task.dir" value="target\" />
+	<property name="interface-it.jar.dir" value="${repository.dir}\com\github\aro-tech\interface-it\0.7.0\" />
+	<property name="mockito.dir" value="${repository.dir}\org\mockito\mockito-core\2.0.43-beta\" />
+	<property name="bytebuddy.dir" value="${repository.dir}\net\bytebuddy\byte-buddy\1.2.3\" />
+	<property name="objenesis.dir" value="${repository.dir}\org\objenesis\objenesis\2.1\" />
+	<property name="hamcrest.dir" value="${repository.dir}\org\hamcrest\hamcrest-core\1.3" />
+	<property name="mockito.sources.jar.path" value="${mockito.dir}\mockito-core-2.0.43-beta-sources.jar" />
+	<property name="assertj.dir" value="${repository.dir}\org\assertj\assertj-core\3.3.0\" />
+	<property name="assertj.sources.jar.path" value="${assertj.dir}\assertj-core-3.3.0-sources.jar" />
+	<property name="junit.dir" value="${repository.dir}\junit\junit\4.12\" />
+	<property name="junit.source.path" value="${project.dir}\test\resources\exampleSrc.txt" />
+	<property name="target.package" value="com.github.aro_tech.interface_it_ant.wrappers" />
+	
+	<path id="class.path">
+		<!-- Path for the task itself, and its dependencies: -->
+		<fileset dir="${task.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${interface-it.jar.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+
+		<!-- Path necessary for loading the delegate classes: -->
+		<!-- For Mockito: -->
+		<fileset dir="${mockito.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${bytebuddy.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${objenesis.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+
+		<!-- For AssertJ: -->
+		<fileset dir="${assertj.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+
+		<!-- For JUnit: -->
+		<fileset dir="${junit.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${hamcrest.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+
+
+	</path>
+	
+	<target name="generate-test-fixture-mixins" depends="">
+		<taskdef name="interface-it" 
+			classname="com.github.aro_tech.interface_it_ant.InterfaceItTask" 
+			classpathref="class.path" />
+		
+		<interface-it echo="Trying to wrap Mockito"  debug="true"
+			outputSourceRootDirectory="${output.java.root}" 
+			delegateClass="org.mockito.Mockito" 
+			targetInterfaceName="Mockito" 
+			targetPackageName="${target.package}"
+			sourceArchivePath="${mockito.sources.jar.path}"
+		/>
+		
+		<mkdir dir="${output.java.root}\com\github.aro_tech.interface_it_ant.wrappers" />
+
+		<interface-it echo="Trying to wrap AssertJ"  debug="true"
+			outputSourceRootDirectory="${output.java.root}" 
+			delegateClass="org.assertj.core.api.Assertions" 
+			targetInterfaceName="AssertJ" 
+			targetPackageName="${target.package}"
+			sourceArchivePath="${assertj.sources.jar.path}"
+		/>
+
+		<interface-it echo="Trying to wrap JUnit Assert"  debug="true"
+			outputSourceRootDirectory="${output.java.root}" 
+			delegateClass="org.junit.Assert" 
+			targetInterfaceName="JUnitAssert" 
+			targetPackageName="${target.package}"
+			sourceTextFilePath="${junit.source.path}"
+		/>
+
+	</target>
+</project>

@@ -59,4 +59,12 @@ public class InterfaceItArguments {
 		return indentationSpaces;
 	}
 
+//	public String getDelegateClassPackage() {
+//		int lastDotIx = delegateClassName.lastIndexOf('.');
+//		if(lastDotIx < 1) {
+//			return "";
+//		}
+//		return delegateClassName.substring(0, lastDotIx);
+//	}
+
 }

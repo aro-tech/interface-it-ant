@@ -11,6 +11,7 @@ import java.util.List;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.interfaceit.ClassCodeGenerator;
+import org.interfaceit.DelegateMethodGenerator;
 import org.interfaceit.meta.arguments.ArgumentNameSource;
 import org.interfaceit.meta.arguments.LookupArgumentNameSource;
 import org.interfaceit.meta.arguments.SourceLineReadingArgumentNameLoader;
@@ -24,7 +25,10 @@ import org.interfaceit.util.FileUtils;
  */
 public class InterfaceItTask extends Task {
 	public static final int DEFAULT_INDENTATION_SPACES = 4;
-
+	
+	public String echo;
+	private boolean debug;
+	
 	private String sourceArchivePath;
 	private String delegateClass;
 	private String sourceTextFilePath;
@@ -40,17 +44,32 @@ public class InterfaceItTask extends Task {
 	 */
 	@Override
 	public void execute() throws BuildException {
+		if(null != this.echo) {
+			System.out.println(echo);
+		}
 		validateAttributes();
 
 		ClassCodeGenerator generator = makeInterfaceItGenerator();
 
 		try {
+			if(debug) {
+				System.out.println(this.toString());
+			}
 			generator.generateClassToFile(getOutputDirectory(), getTargetInterfaceName(), getDelegateClassObject(),
 					getTargetPackageName(), makeArgumentNameSource(), getIndentationSpaces());
 		} catch (IOException e) {
+			if(debug) {
+				e.printStackTrace();
+			}
 			throw new BuildException(e);
 		} catch (ClassNotFoundException e) {
+			if(debug) {
+				e.printStackTrace();
+			}
 			throw new BuildException(makeMessageForDelegateClasssNotFound(e.getMessage()), e);
+		} catch(Throwable t) {
+			t.printStackTrace();
+			throw new BuildException("Unepected error.  Please verify the attributes provided for this task.");
 		}
 	}
 
@@ -61,10 +80,6 @@ public class InterfaceItTask extends Task {
 				+ makePackageReminderIfNecessary(msg);
 	}
 
-	/**
-	 * @param msg
-	 * @return
-	 */
 	private String makePackageReminderIfNecessary(String msg) {
 		String packageReminder = "";
 		if (msg.indexOf('.') < 0) {
@@ -145,7 +160,7 @@ public class InterfaceItTask extends Task {
 
 	private File getOutputDirectory() {
 		return new File(
-				this.getOutputSourceRootDirectory() + "/" + this.getDelegateClass().replace('.', '/') + ".java");
+				this.getOutputSourceRootDirectory() + "/" + this.getTargetPackageName().replace('.', '/'));
 	}
 
 	private void validateAttributes() throws BuildException {
@@ -159,7 +174,7 @@ public class InterfaceItTask extends Task {
 	}
 
 	protected ClassCodeGenerator makeInterfaceItGenerator() {
-		return null;
+		return new DelegateMethodGenerator();
 	}
 
 	/**
@@ -236,5 +251,63 @@ public class InterfaceItTask extends Task {
 	public void setTargetPackageName(String targetPackageName) {
 		this.targetPackageName = targetPackageName;
 	}
+	
+
+	/**
+	 * @return the echo
+	 */
+	public String getEcho() {
+		return echo;
+	}
+
+	/**
+	 * @param echo the echo to set
+	 */
+	public void setEcho(final String echo) {
+		this.echo = echo;
+	}
+
+	/**
+	 * @return the debug
+	 */
+	public boolean isDebug() {
+		return debug;
+	}
+
+	/**
+	 * @param debug the debug to set
+	 */
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		String delegateClassObject = null;
+		try {
+			Class<?> delegateClazz = getDelegateClassObject();
+			delegateClassObject = delegateClazz.toString();
+		}catch(Throwable t) {
+			delegateClassObject = t.toString();
+		}
+		return "InterfaceItTask [echo=" + echo + ", debug=" + debug + ", sourceArchivePath=" + sourceArchivePath
+				+ ", delegateClass=" + delegateClass + ", sourceTextFilePath=" + sourceTextFilePath
+				+ ", outputSourceRootDirectory=" + outputSourceRootDirectory + ", targetInterfaceName="
+				+ targetInterfaceName + ", targetPackageName=" + targetPackageName + ", indentationSpaces="
+				+ indentationSpaces + ", getTextFile()=" + toAbsolutePathString(getTextFile()) + ", getArchiveFile()=" + toAbsolutePathString(getArchiveFile())
+				+ ", getDelegateClassObject()=" + delegateClassObject + ", getOutputDirectory()="
+				+ toAbsolutePathString(getOutputDirectory()) + "]";
+	}
+	
+	private String toAbsolutePathString(File f) {
+		if(null == f) {
+			return "<null>";
+		}
+		return f.getAbsolutePath();
+	}
+
 
 }

@@ -90,7 +90,7 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		underTestWithMocks.execute();
 
 		File saveDir = makeSaveDirectoryFile(iiArguments.getOutputRootDir().getAbsolutePath(),
-				iiArguments.getDelegateClassName());
+				iiArguments.getOutputPackage());
 		verify(mockGenerator).generateClassToFile(argThat(new FileMatcher(saveDir.getAbsolutePath())),
 				eq(iiArguments.getTargetInterfaceName()), eq(Math.class), eq(iiArguments.getOutputPackage()),
 				eq(mockNameSource), eq(iiArguments.getIndentationSpaces()));
@@ -104,7 +104,7 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		underTestWithMocks.execute();
 
 		File saveDir = makeSaveDirectoryFile(iiArguments.getOutputRootDir().getAbsolutePath(),
-				iiArguments.getDelegateClassName());
+				iiArguments.getOutputPackage());
 		verify(mockGenerator).generateClassToFile(argThat(new FileMatcher(saveDir.getAbsolutePath())),
 				eq(iiArguments.getTargetInterfaceName()), eq(Math.class), eq(iiArguments.getOutputPackage()),
 				eq(mockNameSource), eq(InterfaceItTask.DEFAULT_INDENTATION_SPACES));
@@ -214,8 +214,8 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		}
 	}
 
-	private File makeSaveDirectoryFile(String rootPath, String delegateClassName) {
-		File saveDir = new File(rootPath + "/" + delegateClassName.replace('.', '/') + ".java");
+	private File makeSaveDirectoryFile(String rootPath, String delegateClassPackage) {
+		File saveDir = new File(rootPath + "/" + delegateClassPackage.replace('.', '/'));
 		return saveDir;
 	}
 
