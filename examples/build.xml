@@ -57,6 +57,8 @@
 	</path>
 	
 	<target name="generate-test-fixture-mixins" depends="">
+		<mkdir dir="${output.java.root}\com\github.aro_tech.interface_it_ant.wrappers" />
+
 		<taskdef name="interface-it" 
 			classname="com.github.aro_tech.interface_it_ant.InterfaceItTask" 
 			classpathref="class.path" />
@@ -69,7 +71,6 @@
 			sourceArchivePath="${mockito.sources.jar.path}"
 		/>
 		
-		<mkdir dir="${output.java.root}\com\github.aro_tech.interface_it_ant.wrappers" />
 
 		<interface-it echo="Trying to wrap AssertJ"  debug="true"
 			outputSourceRootDirectory="${output.java.root}" 
