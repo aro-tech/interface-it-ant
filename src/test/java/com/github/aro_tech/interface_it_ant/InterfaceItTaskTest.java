@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 
+import com.github.aro_tech.interface_it_ant.io.Writer;
 import com.github.aro_tech.interface_it_ant.wrappers.AssertJ;
 import com.github.aro_tech.interface_it_ant.wrappers.Mockito;
 
@@ -31,6 +32,7 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 	ClassCodeGenerator mockGenerator = mock(ClassCodeGenerator.class);
 	ArgumentNameSource mockNameSource = mock(ArgumentNameSource.class);
 	InterfaceItTask underTestWithMocks;
+	Writer mockWriter = mock(Writer.class);
 
 	@Before
 	public void setUp() throws Exception {
@@ -60,6 +62,7 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 			}
 
 		};
+		underTestWithMocks.setWriter(mockWriter);
 	}
 
 	// Matcher to compare File instances by the absolute path
@@ -146,20 +149,95 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 	}
 
 	@Test
+	public void should_emit_debug_message() {
+		InterfaceItArguments iiArguments = setUpIIArguments();
+		setArguments(iiArguments, underTestWithMocks);
+		underTestWithMocks.setDebug(true);
+		String path = iiArguments.getOutputRootDir().getAbsolutePath();
+		underTestWithMocks.execute();
+		verify(mockWriter).emitText("InterfaceItTask [echo=null, "
+				+ "debug=true, sourceArchivePath=null, delegateClass=java.lang.Math,"
+				+ " sourceTextFilePath=null, outputSourceRootDirectory=" + path
+				+ ", targetInterfaceName=MyMath, targetPackageName=org.example.test, indentationSpaces=6, getTextFile()=<null>, getArchiveFile()=<null>, "
+				+ "getDelegateClassObject()=class java.lang.Math, "
+				+ "getOutputDirectory()=" + path + "\\org\\example\\test]");
+	}
+
+	@Test
+	public void should_emit_echo_message_before_validation() {
+		underTestWithMocks.setEcho("echo test");
+		try {
+			underTestWithMocks.execute();			
+		}catch(Throwable t) {
+			// ignore error - we just need to verify the echo
+		}
+		verify(mockWriter).emitText("echo test");
+	}	
+	
+	@Test
 	public void should_throw_build_exception_if_output_directory_not_provided() {
+		InterfaceItArguments iiArguments = groupIIArguments(null, TEST_OUTPUT_PACKAGE, NON_EXISTENT_CLASS_NAME,
+				TEST_TARGET_INTERFACE_NAME, null);
+		setArguments(iiArguments, underTestWithMocks);
+		underTestWithMocks.setOutputSourceRootDirectory(" ");
+		verifyBuildException(executeReturningExpectedBuildException(), "'outputSourceRootDirectory'",
+				"value is required");
+	}
+
+	@Test
+	public void should_throw_build_exception_if_output_directory_is_blank() {
 		InterfaceItArguments iiArguments = groupIIArguments(null, TEST_OUTPUT_PACKAGE, NON_EXISTENT_CLASS_NAME,
 				TEST_TARGET_INTERFACE_NAME, null);
 		setArguments(iiArguments, underTestWithMocks);
 		verifyBuildException(executeReturningExpectedBuildException(), "'outputSourceRootDirectory'",
 				"value is required");
 	}
+	
+	@Test
+	public void should_warn_and_use_delegate_class_name_if_no_target_interface_name() throws IOException {
+		InterfaceItArguments iiArguments = setUpIIArguments();
+		setArguments(iiArguments, underTestWithMocks);
+		underTestWithMocks.setTargetInterfaceName(null);
+		underTestWithMocks.execute();
 
-	// TODO: verify message for blank outputSourceRootDirectory
+		File saveDir = makeSaveDirectoryFile(iiArguments.getOutputRootDir().getAbsolutePath(),
+				iiArguments.getOutputPackage());
+		verify(mockWriter).emitText("Warning: Using 'Math' by default for missing attribute targetInterfaceName.");
+		verify(mockGenerator).generateClassToFile(argThat(new FileMatcher(saveDir.getAbsolutePath())),
+				eq("Math"), eq(Math.class), eq(iiArguments.getOutputPackage()),
+				eq(mockNameSource), eq(iiArguments.getIndentationSpaces()));
+	}
+
+	@Test
+	public void should_warn_and_use_delegate_class_name_if_blank_target_interface_name() throws IOException {
+		InterfaceItArguments iiArguments = setUpIIArguments();
+		setArguments(iiArguments, underTestWithMocks);
+		underTestWithMocks.setTargetInterfaceName(" ");
+		underTestWithMocks.execute();
+
+		File saveDir = makeSaveDirectoryFile(iiArguments.getOutputRootDir().getAbsolutePath(),
+				iiArguments.getOutputPackage());
+		verify(mockWriter).emitText("Warning: Using 'Math' by default for missing attribute targetInterfaceName.");
+		verify(mockGenerator).generateClassToFile(argThat(new FileMatcher(saveDir.getAbsolutePath())),
+				eq("Math"), eq(Math.class), eq(iiArguments.getOutputPackage()),
+				eq(mockNameSource), eq(iiArguments.getIndentationSpaces()));
+	}
+	
+	@Test
+	public void should_warn_if_no_target_package_name() throws IOException {
+		InterfaceItArguments iiArguments = setUpIIArguments();
+		setArguments(iiArguments, underTestWithMocks);
+		underTestWithMocks.setTargetPackageName(null);
+		underTestWithMocks.execute();
+
+		verify(mockWriter).emitText("Warning: Using root package by default because of missing attribute targetPackageName.");
+		verify(mockGenerator).generateClassToFile(argThat(new FileMatcher(iiArguments.getOutputRootDir().getAbsolutePath())),
+				eq(iiArguments.getTargetInterfaceName()), eq(Math.class), eq(""),
+				eq(mockNameSource), eq(iiArguments.getIndentationSpaces()));
+	}
+	
 	// TODO: warning for insufficient source info
-	// TODO: verify missing/blank targetInterfaceName
-	// TODO: warn for missing targetPackageName 
-	
-	
+
 	private void verifyBuildException(BuildException thrown, String... expectedMessages) {
 		assertThat(thrown).isNotNull();
 		assertThat(thrown.getMessage()).contains(expectedMessages);
@@ -209,8 +287,8 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 
 	private void setOutputRootDir(InterfaceItArguments parameterObject, InterfaceItTask underTestToUse) {
 		File outputRootDir = parameterObject.getOutputRootDir();
-		if(null != outputRootDir) {
-			underTestToUse.setOutputSourceRootDirectory(outputRootDir.getAbsolutePath());			
+		if (null != outputRootDir) {
+			underTestToUse.setOutputSourceRootDirectory(outputRootDir.getAbsolutePath());
 		}
 	}
 
@@ -253,10 +331,5 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		Method method = java.net.URLEncoder.class.getMethod("encode", String.class);
 		assertThat(result.getArgumentNameFor(method, 0)).isEqualTo("stringToEncode");
 	}
-
-	// @Test
-	// public void testMakeInterfaceItGenerator() {
-	// fail("Not yet implemented");
-	// }
 
 }

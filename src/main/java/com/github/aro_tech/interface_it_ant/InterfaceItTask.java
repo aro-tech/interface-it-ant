@@ -17,6 +17,8 @@ import org.interfaceit.meta.arguments.LookupArgumentNameSource;
 import org.interfaceit.meta.arguments.SourceLineReadingArgumentNameLoader;
 import org.interfaceit.util.FileUtils;
 
+import com.github.aro_tech.interface_it_ant.io.Writer;
+
 /**
  * Custom Ant task to generate a wrapper interface delegating to static methods
  * 
@@ -25,10 +27,10 @@ import org.interfaceit.util.FileUtils;
  */
 public class InterfaceItTask extends Task {
 	public static final int DEFAULT_INDENTATION_SPACES = 4;
-	
+
 	public String echo;
 	private boolean debug;
-	
+
 	private String sourceArchivePath;
 	private String delegateClass;
 	private String sourceTextFilePath;
@@ -36,6 +38,18 @@ public class InterfaceItTask extends Task {
 	private String targetInterfaceName;
 	private String targetPackageName;
 	private int indentationSpaces = DEFAULT_INDENTATION_SPACES;
+	private Writer out = new Writer() {
+
+		@Override
+		public void emitThrowable(Throwable t) {
+			out.emitThrowable(t);
+		}
+
+		@Override
+		public void emitText(String text) {
+			System.out.println(text);
+		}
+	};
 
 	/*
 	 * (non-Javadoc)
@@ -44,31 +58,31 @@ public class InterfaceItTask extends Task {
 	 */
 	@Override
 	public void execute() throws BuildException {
-		if(null != this.echo) {
-			System.out.println(echo);
+		if (null != this.echo) {
+			out.emitText(echo);
 		}
 		validateAttributes();
 
 		ClassCodeGenerator generator = makeInterfaceItGenerator();
 
 		try {
-			if(debug) {
-				System.out.println(this.toString());
+			if (debug) {
+				out.emitText(this.toString());
 			}
 			generator.generateClassToFile(getOutputDirectory(), getTargetInterfaceName(), getDelegateClassObject(),
 					getTargetPackageName(), makeArgumentNameSource(), getIndentationSpaces());
 		} catch (IOException e) {
-			if(debug) {
-				e.printStackTrace();
+			if (debug) {
+				out.emitThrowable(e);
 			}
 			throw new BuildException(e);
 		} catch (ClassNotFoundException e) {
-			if(debug) {
-				e.printStackTrace();
+			if (debug) {
+				out.emitThrowable(e);
 			}
 			throw new BuildException(makeMessageForDelegateClasssNotFound(e.getMessage()), e);
-		} catch(Throwable t) {
-			t.printStackTrace();
+		} catch (Throwable t) {
+			out.emitThrowable(t);
 			throw new BuildException("Unepected error.  Please verify the attributes provided for this task.");
 		}
 	}
@@ -159,17 +173,30 @@ public class InterfaceItTask extends Task {
 	}
 
 	private File getOutputDirectory() {
-		return new File(
-				this.getOutputSourceRootDirectory() + "/" + this.getTargetPackageName().replace('.', '/'));
+		return new File(this.getOutputSourceRootDirectory() + "/" + this.getTargetPackageName().replace('.', '/'));
 	}
 
 	private void validateAttributes() throws BuildException {
 		if (null == this.delegateClass || delegateClass.trim().length() < 1) {
 			throw new BuildException("A value is required for the attribute 'delegateClass'");
 		}
-		
-		if(null == this.outputSourceRootDirectory) {
+
+		if (null == this.outputSourceRootDirectory || this.outputSourceRootDirectory.trim().length() < 1) {
 			throw new BuildException("A value is required for the attribute 'outputSourceRootDirectory'");
+		}
+
+		if (null == this.targetInterfaceName || this.targetInterfaceName.trim().length() < 1) {
+			try {
+				this.targetInterfaceName = this.getDelegateClassObject().getSimpleName();
+				out.emitText("Warning: Using '" + this.targetInterfaceName
+						+ "' by default for missing attribute targetInterfaceName.");
+			} catch (ClassNotFoundException | NullPointerException e) {
+				throw new BuildException("Unable to load class from attribute delegateClass: " + this.delegateClass);
+			}
+		}
+		
+		if(this.getTargetPackageName().isEmpty()) {
+			out.emitText("Warning: Using root package by default because of missing attribute targetPackageName.");
 		}
 	}
 
@@ -241,7 +268,7 @@ public class InterfaceItTask extends Task {
 	 * @return the targetPackageName
 	 */
 	public String getTargetPackageName() {
-		return targetPackageName;
+		return null == targetPackageName ? "" : targetPackageName;
 	}
 
 	/**
@@ -251,7 +278,6 @@ public class InterfaceItTask extends Task {
 	public void setTargetPackageName(String targetPackageName) {
 		this.targetPackageName = targetPackageName;
 	}
-	
 
 	/**
 	 * @return the echo
@@ -261,7 +287,8 @@ public class InterfaceItTask extends Task {
 	}
 
 	/**
-	 * @param echo the echo to set
+	 * @param echo
+	 *            the echo to set
 	 */
 	public void setEcho(final String echo) {
 		this.echo = echo;
@@ -275,13 +302,16 @@ public class InterfaceItTask extends Task {
 	}
 
 	/**
-	 * @param debug the debug to set
+	 * @param debug
+	 *            the debug to set
 	 */
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -290,24 +320,32 @@ public class InterfaceItTask extends Task {
 		try {
 			Class<?> delegateClazz = getDelegateClassObject();
 			delegateClassObject = delegateClazz.toString();
-		}catch(Throwable t) {
+		} catch (Throwable t) {
 			delegateClassObject = t.toString();
 		}
 		return "InterfaceItTask [echo=" + echo + ", debug=" + debug + ", sourceArchivePath=" + sourceArchivePath
 				+ ", delegateClass=" + delegateClass + ", sourceTextFilePath=" + sourceTextFilePath
 				+ ", outputSourceRootDirectory=" + outputSourceRootDirectory + ", targetInterfaceName="
 				+ targetInterfaceName + ", targetPackageName=" + targetPackageName + ", indentationSpaces="
-				+ indentationSpaces + ", getTextFile()=" + toAbsolutePathString(getTextFile()) + ", getArchiveFile()=" + toAbsolutePathString(getArchiveFile())
-				+ ", getDelegateClassObject()=" + delegateClassObject + ", getOutputDirectory()="
-				+ toAbsolutePathString(getOutputDirectory()) + "]";
+				+ indentationSpaces + ", getTextFile()=" + toAbsolutePathString(getTextFile()) + ", getArchiveFile()="
+				+ toAbsolutePathString(getArchiveFile()) + ", getDelegateClassObject()=" + delegateClassObject
+				+ ", getOutputDirectory()=" + toAbsolutePathString(getOutputDirectory()) + "]";
 	}
-	
+
 	private String toAbsolutePathString(File f) {
-		if(null == f) {
+		if (null == f) {
 			return "<null>";
 		}
 		return f.getAbsolutePath();
 	}
 
-
+	/**
+	 * Direct text output
+	 * 
+	 * @param out
+	 *            Writer to use for output
+	 */
+	void setWriter(Writer out) {
+		this.out = out;
+	}
 }
