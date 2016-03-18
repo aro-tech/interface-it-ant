@@ -177,15 +177,15 @@ public class InterfaceItTask extends Task {
 	}
 
 	private void validateAttributes() throws BuildException {
-		if (null == this.delegateClass || delegateClass.trim().length() < 1) {
+		if (isNullOrBlank(this.delegateClass)) {
 			throw new BuildException("A value is required for the attribute 'delegateClass'");
 		}
 
-		if (null == this.outputSourceRootDirectory || this.outputSourceRootDirectory.trim().length() < 1) {
+		if (isNullOrBlank(this.outputSourceRootDirectory)) {
 			throw new BuildException("A value is required for the attribute 'outputSourceRootDirectory'");
 		}
 
-		if (null == this.targetInterfaceName || this.targetInterfaceName.trim().length() < 1) {
+		if (isNullOrBlank(this.targetInterfaceName)) {
 			try {
 				this.targetInterfaceName = this.getDelegateClassObject().getSimpleName();
 				out.emitText("Warning: Using '" + this.targetInterfaceName
@@ -194,10 +194,23 @@ public class InterfaceItTask extends Task {
 				throw new BuildException("Unable to load class from attribute delegateClass: " + this.delegateClass);
 			}
 		}
-		
-		if(this.getTargetPackageName().isEmpty()) {
+
+		if (this.getTargetPackageName().isEmpty()) {
 			out.emitText("Warning: Using root package by default because of missing attribute targetPackageName.");
 		}
+
+		if (noSourceFilesProvided()) {
+			out.emitText("Warning: No source file or archive provided.  "
+					+ "Using default argument names such as 'arg0', 'arg1', etc.");
+		}
+	}
+
+	private boolean noSourceFilesProvided() {
+		return isNullOrBlank(this.sourceArchivePath) && isNullOrBlank(this.sourceTextFilePath);
+	}
+
+	private boolean isNullOrBlank(String property) {
+		return property == null || property.trim().length() < 1;
 	}
 
 	protected ClassCodeGenerator makeInterfaceItGenerator() {

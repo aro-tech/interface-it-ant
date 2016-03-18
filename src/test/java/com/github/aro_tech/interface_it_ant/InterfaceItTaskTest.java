@@ -92,11 +92,7 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 
 		underTestWithMocks.execute();
 
-		File saveDir = makeSaveDirectoryFile(iiArguments.getOutputRootDir().getAbsolutePath(),
-				iiArguments.getOutputPackage());
-		verify(mockGenerator).generateClassToFile(argThat(new FileMatcher(saveDir.getAbsolutePath())),
-				eq(iiArguments.getTargetInterfaceName()), eq(Math.class), eq(iiArguments.getOutputPackage()),
-				eq(mockNameSource), eq(iiArguments.getIndentationSpaces()));
+		verifyNormalMockExecution(iiArguments);
 	}
 
 	@Test
@@ -236,8 +232,38 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 				eq(mockNameSource), eq(iiArguments.getIndentationSpaces()));
 	}
 	
-	// TODO: warning for insufficient source info
+	@Test
+	public void should_warn_if_source_paths_are_null() throws IOException {
+		InterfaceItArguments iiArguments = setUpIIArguments();
+		setArguments(iiArguments, underTestWithMocks);
+		underTestWithMocks.setSourceArchivePath(null);
+		underTestWithMocks.setSourceArchivePath(null);
+		underTestWithMocks.execute();
 
+		verify(mockWriter).emitText("Warning: No source file or archive provided.  Using default argument names such as 'arg0', 'arg1', etc.");
+		verifyNormalMockExecution(iiArguments);
+	}
+	
+	@Test
+	public void should_warn_if_source_paths_are_blank() throws IOException {
+		InterfaceItArguments iiArguments = setUpIIArguments();
+		setArguments(iiArguments, underTestWithMocks);
+		underTestWithMocks.setSourceArchivePath(" ");
+		underTestWithMocks.setSourceArchivePath(" ");
+		underTestWithMocks.execute();
+
+		verify(mockWriter).emitText("Warning: No source file or archive provided.  Using default argument names such as 'arg0', 'arg1', etc.");
+		verifyNormalMockExecution(iiArguments);
+	}
+
+	private void verifyNormalMockExecution(InterfaceItArguments iiArguments) throws IOException {
+		File saveDir = makeSaveDirectoryFile(iiArguments.getOutputRootDir().getAbsolutePath(),
+				iiArguments.getOutputPackage());
+		verify(mockGenerator).generateClassToFile(argThat(new FileMatcher(saveDir.getAbsolutePath())),
+				eq(iiArguments.getTargetInterfaceName()), eq(Math.class), eq(iiArguments.getOutputPackage()),
+				eq(mockNameSource), eq(iiArguments.getIndentationSpaces()));
+	}
+	
 	private void verifyBuildException(BuildException thrown, String... expectedMessages) {
 		assertThat(thrown).isNotNull();
 		assertThat(thrown.getMessage()).contains(expectedMessages);
