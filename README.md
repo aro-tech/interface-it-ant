@@ -6,9 +6,19 @@ Custom Ant task for [interface_it] (https://github.com/aro-tech/interface-it)
 
 Not released yet
 
-##Example usage
+##Example usage in a build.xml file
 
-TODO
+```xml
+<interface-it echo="Trying to wrap AssertJ"  debug="true"
+			outputSourceRootDirectory="${output.java.root}" 
+			delegateClass="org.assertj.core.api.Assertions" 
+			targetInterfaceName="AssertJ" 
+			targetPackageName="${target.package}"
+			sourceArchivePath="${assertj.sources.jar.path}"
+		/>
+```
+		
+See the [full example code here](https://github.com/aro-tech/interface-it-ant/blob/master/examples/build.xml "full example code").
 
 
 ##Roadmap and future directions:
