@@ -69,8 +69,10 @@ public class InterfaceItTask extends Task {
 			if (debug) {
 				out.emitText(this.toString());
 			}
-			generator.generateClassToFile(getOutputDirectory(), getTargetInterfaceName(), getDelegateClassObject(),
+			File wroteFile = generator.generateClassToFile(getOutputDirectory(), getTargetInterfaceName(), getDelegateClassObject(),
 					getTargetPackageName(), makeArgumentNameSource(), getIndentationSpaces());
+			
+			out.emitText("Wrote file: " + wroteFile.getAbsolutePath());
 		} catch (IOException e) {
 			if (debug) {
 				out.emitThrowable(e);

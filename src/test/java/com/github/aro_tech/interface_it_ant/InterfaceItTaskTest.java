@@ -33,6 +33,8 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 	ArgumentNameSource mockNameSource = mock(ArgumentNameSource.class);
 	InterfaceItTask underTestWithMocks;
 	Writer mockWriter = mock(Writer.class);
+	private static final File WROTE_FILE = new File("./Whatever.java");
+
 
 	@Before
 	public void setUp() throws Exception {
@@ -89,6 +91,7 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 	public void should_call_generator_with_expected_arguments() throws IOException {
 		InterfaceItArguments iiArguments = setUpIIArguments();
 		setArguments(iiArguments, underTestWithMocks);
+		setGeneratorMockToReturnFile();
 
 		underTestWithMocks.execute();
 
@@ -96,9 +99,28 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 	}
 
 	@Test
+	public void should_write_file_path_on_success() throws IOException {
+		InterfaceItArguments iiArguments = setUpIIArguments();
+		setArguments(iiArguments, underTestWithMocks);
+		setGeneratorMockToReturnFile();
+		underTestWithMocks.execute();
+		verify(mockWriter).emitText("Wrote file: " + WROTE_FILE.getAbsolutePath());
+		verifyNormalMockExecution(iiArguments);
+	}
+
+	/**
+	 * @throws IOException
+	 */
+	private void setGeneratorMockToReturnFile() throws IOException {
+		when(mockGenerator.generateClassToFile(any(), anyString(), any(), anyString(), any(), anyInt()))
+				.thenReturn(WROTE_FILE);
+	}
+
+	@Test
 	public void should_call_generator_using_default_indentation_when_not_specified() throws IOException {
 		InterfaceItArguments iiArguments = setUpArguments(null);
 		setArguments(iiArguments, underTestWithMocks);
+		setGeneratorMockToReturnFile();
 
 		underTestWithMocks.execute();
 
@@ -145,31 +167,33 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 	}
 
 	@Test
-	public void should_emit_debug_message() {
+	public void should_emit_debug_message() throws IOException {
 		InterfaceItArguments iiArguments = setUpIIArguments();
 		setArguments(iiArguments, underTestWithMocks);
 		underTestWithMocks.setDebug(true);
 		String path = iiArguments.getOutputRootDir().getAbsolutePath();
+		setGeneratorMockToReturnFile();
+
 		underTestWithMocks.execute();
-		verify(mockWriter).emitText("InterfaceItTask [echo=null, "
-				+ "debug=true, sourceArchivePath=null, delegateClass=java.lang.Math,"
-				+ " sourceTextFilePath=null, outputSourceRootDirectory=" + path
-				+ ", targetInterfaceName=MyMath, targetPackageName=org.example.test, indentationSpaces=6, getTextFile()=<null>, getArchiveFile()=<null>, "
-				+ "getDelegateClassObject()=class java.lang.Math, "
-				+ "getOutputDirectory()=" + path + "\\org\\example\\test]");
+		verify(mockWriter).emitText(
+				"InterfaceItTask [echo=null, " + "debug=true, sourceArchivePath=null, delegateClass=java.lang.Math,"
+						+ " sourceTextFilePath=null, outputSourceRootDirectory=" + path
+						+ ", targetInterfaceName=MyMath, targetPackageName=org.example.test, indentationSpaces=6, getTextFile()=<null>, getArchiveFile()=<null>, "
+						+ "getDelegateClassObject()=class java.lang.Math, " + "getOutputDirectory()=" + path
+						+ "\\org\\example\\test]");
 	}
 
 	@Test
 	public void should_emit_echo_message_before_validation() {
 		underTestWithMocks.setEcho("echo test");
 		try {
-			underTestWithMocks.execute();			
-		}catch(Throwable t) {
+			underTestWithMocks.execute();
+		} catch (Throwable t) {
 			// ignore error - we just need to verify the echo
 		}
 		verify(mockWriter).emitText("echo test");
-	}	
-	
+	}
+
 	@Test
 	public void should_throw_build_exception_if_output_directory_not_provided() {
 		InterfaceItArguments iiArguments = groupIIArguments(null, TEST_OUTPUT_PACKAGE, NON_EXISTENT_CLASS_NAME,
@@ -188,20 +212,22 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		verifyBuildException(executeReturningExpectedBuildException(), "'outputSourceRootDirectory'",
 				"value is required");
 	}
-	
+
 	@Test
 	public void should_warn_and_use_delegate_class_name_if_no_target_interface_name() throws IOException {
 		InterfaceItArguments iiArguments = setUpIIArguments();
 		setArguments(iiArguments, underTestWithMocks);
 		underTestWithMocks.setTargetInterfaceName(null);
+		setGeneratorMockToReturnFile();
+
 		underTestWithMocks.execute();
 
 		File saveDir = makeSaveDirectoryFile(iiArguments.getOutputRootDir().getAbsolutePath(),
 				iiArguments.getOutputPackage());
 		verify(mockWriter).emitText("Warning: Using 'Math' by default for missing attribute targetInterfaceName.");
-		verify(mockGenerator).generateClassToFile(argThat(new FileMatcher(saveDir.getAbsolutePath())),
-				eq("Math"), eq(Math.class), eq(iiArguments.getOutputPackage()),
-				eq(mockNameSource), eq(iiArguments.getIndentationSpaces()));
+		verify(mockGenerator).generateClassToFile(argThat(new FileMatcher(saveDir.getAbsolutePath())), eq("Math"),
+				eq(Math.class), eq(iiArguments.getOutputPackage()), eq(mockNameSource),
+				eq(iiArguments.getIndentationSpaces()));
 	}
 
 	@Test
@@ -209,50 +235,62 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		InterfaceItArguments iiArguments = setUpIIArguments();
 		setArguments(iiArguments, underTestWithMocks);
 		underTestWithMocks.setTargetInterfaceName(" ");
+		setGeneratorMockToReturnFile();
+
 		underTestWithMocks.execute();
 
 		File saveDir = makeSaveDirectoryFile(iiArguments.getOutputRootDir().getAbsolutePath(),
 				iiArguments.getOutputPackage());
 		verify(mockWriter).emitText("Warning: Using 'Math' by default for missing attribute targetInterfaceName.");
-		verify(mockGenerator).generateClassToFile(argThat(new FileMatcher(saveDir.getAbsolutePath())),
-				eq("Math"), eq(Math.class), eq(iiArguments.getOutputPackage()),
-				eq(mockNameSource), eq(iiArguments.getIndentationSpaces()));
+		verify(mockGenerator).generateClassToFile(argThat(new FileMatcher(saveDir.getAbsolutePath())), eq("Math"),
+				eq(Math.class), eq(iiArguments.getOutputPackage()), eq(mockNameSource),
+				eq(iiArguments.getIndentationSpaces()));
 	}
-	
+
 	@Test
 	public void should_warn_if_no_target_package_name() throws IOException {
 		InterfaceItArguments iiArguments = setUpIIArguments();
 		setArguments(iiArguments, underTestWithMocks);
 		underTestWithMocks.setTargetPackageName(null);
+		setGeneratorMockToReturnFile();
+
 		underTestWithMocks.execute();
 
-		verify(mockWriter).emitText("Warning: Using root package by default because of missing attribute targetPackageName.");
-		verify(mockGenerator).generateClassToFile(argThat(new FileMatcher(iiArguments.getOutputRootDir().getAbsolutePath())),
-				eq(iiArguments.getTargetInterfaceName()), eq(Math.class), eq(""),
-				eq(mockNameSource), eq(iiArguments.getIndentationSpaces()));
+		verify(mockWriter)
+				.emitText("Warning: Using root package by default because of missing attribute targetPackageName.");
+		verify(mockGenerator).generateClassToFile(
+				argThat(new FileMatcher(iiArguments.getOutputRootDir().getAbsolutePath())),
+				eq(iiArguments.getTargetInterfaceName()), eq(Math.class), eq(""), eq(mockNameSource),
+				eq(iiArguments.getIndentationSpaces()));
 	}
-	
+
 	@Test
 	public void should_warn_if_source_paths_are_null() throws IOException {
 		InterfaceItArguments iiArguments = setUpIIArguments();
 		setArguments(iiArguments, underTestWithMocks);
 		underTestWithMocks.setSourceArchivePath(null);
 		underTestWithMocks.setSourceArchivePath(null);
+		setGeneratorMockToReturnFile();
+
 		underTestWithMocks.execute();
 
-		verify(mockWriter).emitText("Warning: No source file or archive provided.  Using default argument names such as 'arg0', 'arg1', etc.");
+		verify(mockWriter).emitText(
+				"Warning: No source file or archive provided.  Using default argument names such as 'arg0', 'arg1', etc.");
 		verifyNormalMockExecution(iiArguments);
 	}
-	
+
 	@Test
 	public void should_warn_if_source_paths_are_blank() throws IOException {
 		InterfaceItArguments iiArguments = setUpIIArguments();
 		setArguments(iiArguments, underTestWithMocks);
 		underTestWithMocks.setSourceArchivePath(" ");
 		underTestWithMocks.setSourceArchivePath(" ");
+		setGeneratorMockToReturnFile();
+
 		underTestWithMocks.execute();
 
-		verify(mockWriter).emitText("Warning: No source file or archive provided.  Using default argument names such as 'arg0', 'arg1', etc.");
+		verify(mockWriter).emitText(
+				"Warning: No source file or archive provided.  Using default argument names such as 'arg0', 'arg1', etc.");
 		verifyNormalMockExecution(iiArguments);
 	}
 
@@ -263,7 +301,7 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 				eq(iiArguments.getTargetInterfaceName()), eq(Math.class), eq(iiArguments.getOutputPackage()),
 				eq(mockNameSource), eq(iiArguments.getIndentationSpaces()));
 	}
-	
+
 	private void verifyBuildException(BuildException thrown, String... expectedMessages) {
 		assertThat(thrown).isNotNull();
 		assertThat(thrown.getMessage()).contains(expectedMessages);

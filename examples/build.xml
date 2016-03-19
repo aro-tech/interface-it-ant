@@ -1,6 +1,6 @@
 <project name="interface-it-ant tasks" default="generate-test-fixture-mixins">
-	<!-- REPLACE <YOUR HOME DIRECTORY> here: -->
-	<property name="repository.dir" value="<YOUR HOME DIRECTORY>\.m2\repository" />
+	<!-- REPLACE YOUR HOME DIRECTORY here: -->
+	<property name="repository.dir" value="YOUR HOME DIRECTORY\.m2\repository" />
 
 	<property name="project.dir" value="." />
 	<property name="output.java.root" value="${project.dir}/src/test/java" />
