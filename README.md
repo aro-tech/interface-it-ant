@@ -4,7 +4,9 @@ Custom Ant task for [interface_it] (https://github.com/aro-tech/interface-it)
 
 ##Latest release
 
-Not released yet
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.aro-tech/interface-it-ant/badge.svg)](http://search.maven.org/#artifactdetails|com.github.aro-tech|interface-it-ant|0.7.0|jar)
+
+v0.7.0: [Release notes on github] (https://github.com/aro-tech/interface-it-ant/releases/tag/v0.7.0)
 
 ##Example usage in a build.xml file
 
@@ -20,12 +22,6 @@ Not released yet
 		
 See the [full example code here](https://github.com/aro-tech/interface-it-ant/blob/master/examples/build.xml "full example code").
 
-
-##Roadmap and future directions:
-
-###v0.7.0
-
- * Running implementation based on interface-it 0.7.0
  
 
 ##Blog
