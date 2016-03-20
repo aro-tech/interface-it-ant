@@ -8,6 +8,8 @@ Custom Ant task for [interface_it] (https://github.com/aro-tech/interface-it)
 
 v0.7.0: [Release notes on github] (https://github.com/aro-tech/interface-it-ant/releases/tag/0.7.0)
 
+[Binary downloads] (https://oss.sonatype.org/content/groups/public/com/github/aro-tech/interface-it-ant/0.7.0/ "binaries")
+
 ##Example usage in a build.xml file
 
 ```xml
