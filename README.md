@@ -4,11 +4,11 @@ Custom Ant task for [interface_it] (https://github.com/aro-tech/interface-it)
 
 ##Latest release
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.aro-tech/interface-it-ant/badge.svg)](http://search.maven.org/#artifactdetails|com.github.aro-tech|interface-it-ant|0.7.0|jar)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.aro-tech/interface-it-ant/badge.svg)](http://search.maven.org/#artifactdetails|com.github.aro-tech|interface-it-ant|0.8.0|jar)
 
-v0.7.0: [Release notes on github] (https://github.com/aro-tech/interface-it-ant/releases/tag/0.7.0)
+v0.8.0: [Release notes on github] (https://github.com/aro-tech/interface-it-ant/releases/tag/v0.8.0)
 
-[Binary downloads] (https://oss.sonatype.org/content/groups/public/com/github/aro-tech/interface-it-ant/0.7.0/ "binaries")
+[Binary downloads] (https://oss.sonatype.org/content/groups/public/com/github/aro-tech/interface-it-ant/0.8.0/ "binaries")
 
 ##Example usage in a build.xml file
 
