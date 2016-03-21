@@ -1,6 +1,8 @@
 # interface-it-ant
 Custom Ant task for [interface_it] (https://github.com/aro-tech/interface-it)
 
+Requires Java 8 (or higher)
+
 
 ##Latest release
 
