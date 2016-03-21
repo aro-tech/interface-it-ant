@@ -75,8 +75,8 @@
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
-	
-		<build>
+
+	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
@@ -151,12 +151,16 @@
 					<archive>
 						<manifest>
 						</manifest>
+						<manifestEntries>
+							<Built-By>aro-tech</Built-By>
+							<ProductVersion>${project.version}</ProductVersion>
+						</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-	
+
 
 	<reporting>
 		<plugins>
