@@ -7,12 +7,12 @@
 	
 	
 	<property name="task.dir" value="target\" />
-	<property name="interface-it.jar.dir" value="${repository.dir}\com\github\aro-tech\interface-it\0.7.0\" />
-	<property name="mockito.dir" value="${repository.dir}\org\mockito\mockito-core\2.0.43-beta\" />
+	<property name="interface-it.jar.dir" value="${repository.dir}\com\github\aro-tech\interface-it\0.8.0\" />
+	<property name="mockito.dir" value="${repository.dir}\org\mockito\mockito-core\2.0.44-beta\" />
 	<property name="bytebuddy.dir" value="${repository.dir}\net\bytebuddy\byte-buddy\1.2.3\" />
 	<property name="objenesis.dir" value="${repository.dir}\org\objenesis\objenesis\2.1\" />
 	<property name="hamcrest.dir" value="${repository.dir}\org\hamcrest\hamcrest-core\1.3" />
-	<property name="mockito.sources.jar.path" value="${mockito.dir}\mockito-core-2.0.43-beta-sources.jar" />
+	<property name="mockito.sources.jar.path" value="${mockito.dir}\mockito-core-2.0.44-beta-sources.jar" />
 	<property name="assertj.dir" value="${repository.dir}\org\assertj\assertj-core\3.3.0\" />
 	<property name="assertj.sources.jar.path" value="${assertj.dir}\assertj-core-3.3.0-sources.jar" />
 	<property name="junit.dir" value="${repository.dir}\junit\junit\4.12\" />
