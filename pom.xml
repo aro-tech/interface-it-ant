@@ -4,7 +4,7 @@
 
 	<groupId>com.github.aro-tech</groupId>
 	<artifactId>interface-it-ant</artifactId>
-	<version>0.8.0</version>
+	<version>0.8.1</version>
 	<packaging>jar</packaging>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Ant task to create an interface which delegates to a class's static methods</description>
