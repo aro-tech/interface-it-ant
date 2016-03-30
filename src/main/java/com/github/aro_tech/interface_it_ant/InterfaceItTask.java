@@ -124,15 +124,8 @@ public class InterfaceItTask extends Task {
 		File archiveFile = getArchiveFile();
 		List<String> sourceLines = new ArrayList<>();
 		if (null != archiveFile && archiveFile.exists()) {
-			Class<?> delegate = this.getDelegateClassObject();
-			List<String> args = new ArrayList<>();
-			while(null != delegate && delegate != Object.class) {
-				String canonicalClassName = delegate.getName();
-				args.add(canonicalClassNameToJavaFilePath(canonicalClassName));	
-				delegate = delegate.getSuperclass();
-			}
 			sourceLines = new FileUtils().readFilesInZipArchive(archiveFile,
-					args.toArray(new String[0]));
+					makeDelegateSourcePaths());
 
 		} else {
 			File textFile = getTextFile();
@@ -145,6 +138,18 @@ public class InterfaceItTask extends Task {
 			new SourceLineReadingArgumentNameLoader().parseAndLoad(sourceLines, nameSource);
 		}
 		return nameSource;
+	}
+
+	private String[] makeDelegateSourcePaths() throws ClassNotFoundException {
+		Class<?> delegate = this.getDelegateClassObject();
+		List<String> args = new ArrayList<>();
+		while(null != delegate && delegate != Object.class) {
+			String canonicalClassName = delegate.getName();
+			args.add(canonicalClassNameToJavaFilePath(canonicalClassName));	
+			delegate = delegate.getSuperclass();
+		}
+		String[] sourcePaths = args.toArray(new String[0]);
+		return sourcePaths;
 	}
 
 	private String canonicalClassNameToJavaFilePath(String canonicalClassName) {
