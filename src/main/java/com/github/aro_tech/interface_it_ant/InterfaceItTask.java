@@ -124,8 +124,15 @@ public class InterfaceItTask extends Task {
 		File archiveFile = getArchiveFile();
 		List<String> sourceLines = new ArrayList<>();
 		if (null != archiveFile && archiveFile.exists()) {
+			Class<?> delegate = this.getDelegateClassObject();
+			List<String> args = new ArrayList<>();
+			while(null != delegate && delegate != Object.class) {
+				String canonicalClassName = delegate.getName();
+				args.add(canonicalClassNameToJavaFilePath(canonicalClassName));	
+				delegate = delegate.getSuperclass();
+			}
 			sourceLines = new FileUtils().readFilesInZipArchive(archiveFile,
-					this.getDelegateClassObject().getName().replace('.', '/') + ".java");
+					args.toArray(new String[0]));
 
 		} else {
 			File textFile = getTextFile();
@@ -138,6 +145,10 @@ public class InterfaceItTask extends Task {
 			new SourceLineReadingArgumentNameLoader().parseAndLoad(sourceLines, nameSource);
 		}
 		return nameSource;
+	}
+
+	private String canonicalClassNameToJavaFilePath(String canonicalClassName) {
+		return canonicalClassName.replace('.', '/') + ".java";
 	}
 
 	private File getTextFile() {

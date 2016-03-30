@@ -384,6 +384,21 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 	}
 
 	@Test
+	public void should_construct_argument_name_source_from_zip_with_superclass_bug1_INTEGRATION()
+			throws NoSuchMethodException, SecurityException, ClassNotFoundException, IOException {
+		underTest.setDelegateClass(org.mockito.Mockito.class.getName());
+
+		String path = this.getClass().getClassLoader().getResource("examples.zip").toExternalForm().substring(6);
+		underTest.setSourceArchivePath(path);
+
+		ArgumentNameSource result = underTest.makeArgumentNameSource();
+		Method method = org.mockito.Matchers.class.getMethod("argThat", ArgumentMatcher.class);
+		assertThat(result.getArgumentNameFor(method, 0)).isEqualTo("matcher");
+	}
+
+	
+	
+	@Test
 	public void should_construct_argument_name_source_from_text_file_INTEGRATION()
 			throws NoSuchMethodException, SecurityException, ClassNotFoundException, IOException {
 		underTest.setDelegateClass(java.net.URLEncoder.class.getName());
