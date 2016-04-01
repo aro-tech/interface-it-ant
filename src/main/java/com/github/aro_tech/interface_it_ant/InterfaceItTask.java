@@ -74,18 +74,32 @@ public class InterfaceItTask extends Task {
 			
 			out.emitText("Wrote file: " + wroteFile.getAbsolutePath());
 		} catch (IOException e) {
-			if (debug) {
-				out.emitThrowable(e);
-			}
-			throw new BuildException(e);
+			handleIOException(e);
 		} catch (ClassNotFoundException e) {
-			if (debug) {
-				out.emitThrowable(e);
-			}
-			throw new BuildException(makeMessageForDelegateClasssNotFound(e.getMessage()), e);
+			handleClassNotFound(e);
 		} catch (Throwable t) {
+			handleUnexpectedError(t);
+		}
+	}
+
+	private void handleUnexpectedError(Throwable t) {
+		out.emitThrowable(t);
+		throw new BuildException("Unepected error.  Please verify the attributes provided for this task.");
+	}
+
+	private void handleClassNotFound(ClassNotFoundException e) {
+		emitThrowableIfDebug(e);
+		throw new BuildException(makeMessageForDelegateClasssNotFound(e.getMessage()), e);
+	}
+
+	private void handleIOException(IOException e) {
+		emitThrowableIfDebug(e);
+		throw new BuildException(e);
+	}
+
+	private void emitThrowableIfDebug(Throwable t) {
+		if (debug) {
 			out.emitThrowable(t);
-			throw new BuildException("Unepected error.  Please verify the attributes provided for this task.");
 		}
 	}
 
@@ -195,14 +209,27 @@ public class InterfaceItTask extends Task {
 	}
 
 	private void validateAttributes() throws BuildException {
-		if (isNullOrBlank(this.delegateClass)) {
-			throw new BuildException("A value is required for the attribute 'delegateClass'");
-		}
+		verifyDelegateClass();
+		verifyOutputSourceRootDir();
+		checkForAndHandleMissingTargetInterfaceName();
+		warnIfMissingPackageName();
+		warnIfNoSourceIsProvided();
+	}
 
-		if (isNullOrBlank(this.outputSourceRootDirectory)) {
-			throw new BuildException("A value is required for the attribute 'outputSourceRootDirectory'");
+	private void warnIfNoSourceIsProvided() {
+		if (noSourceFilesProvided()) {
+			out.emitText("Warning: No source file or archive provided.  "
+					+ "Using default argument names such as 'arg0', 'arg1', etc.");
 		}
+	}
 
+	private void warnIfMissingPackageName() {
+		if (this.getTargetPackageName().isEmpty()) {
+			out.emitText("Warning: Using root package by default because of missing attribute targetPackageName.");
+		}
+	}
+
+	private void checkForAndHandleMissingTargetInterfaceName() {
 		if (isNullOrBlank(this.targetInterfaceName)) {
 			try {
 				this.targetInterfaceName = this.getDelegateClassObject().getSimpleName();
@@ -212,14 +239,17 @@ public class InterfaceItTask extends Task {
 				throw new BuildException("Unable to load class from attribute delegateClass: " + this.delegateClass);
 			}
 		}
+	}
 
-		if (this.getTargetPackageName().isEmpty()) {
-			out.emitText("Warning: Using root package by default because of missing attribute targetPackageName.");
+	private void verifyOutputSourceRootDir() {
+		if (isNullOrBlank(this.outputSourceRootDirectory)) {
+			throw new BuildException("A value is required for the attribute 'outputSourceRootDirectory'");
 		}
+	}
 
-		if (noSourceFilesProvided()) {
-			out.emitText("Warning: No source file or archive provided.  "
-					+ "Using default argument names such as 'arg0', 'arg1', etc.");
+	private void verifyDelegateClass() {
+		if (isNullOrBlank(this.delegateClass)) {
+			throw new BuildException("A value is required for the attribute 'delegateClass'");
 		}
 	}
 
