@@ -5,12 +5,12 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.apache.tools.ant.BuildException;
-import org.interfaceit.ClassCodeGenerator;
-import org.interfaceit.meta.arguments.ArgumentNameSource;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 
+import com.github.aro_tech.interface_it.api.StatisticProvidingMixinGenerator;
+import com.github.aro_tech.interface_it.meta.arguments.ArgumentNameSource;
 import com.github.aro_tech.interface_it_ant.io.Writer;
 import com.github.aro_tech.interface_it_ant.wrappers.AssertJ;
 import com.github.aro_tech.interface_it_ant.wrappers.Mockito;
@@ -29,12 +29,11 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 	private static final String TEST_OUTPUT_PACKAGE = "org.example.test";
 	private static final String DUMMY_SOURCE_ROOT = "./dummySourceRoot";
 	InterfaceItTask underTest;
-	ClassCodeGenerator mockGenerator = mock(ClassCodeGenerator.class);
+	StatisticProvidingMixinGenerator mockGenerator = mock(StatisticProvidingMixinGenerator.class);
 	ArgumentNameSource mockNameSource = mock(ArgumentNameSource.class);
 	InterfaceItTask underTestWithMocks;
 	Writer mockWriter = mock(Writer.class);
 	private static final File WROTE_FILE = new File("./Whatever.java");
-
 
 	@Before
 	public void setUp() throws Exception {
@@ -59,7 +58,7 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 			 * makeInterfaceItGenerator()
 			 */
 			@Override
-			protected ClassCodeGenerator makeInterfaceItGenerator() {
+			protected StatisticProvidingMixinGenerator makeInterfaceItGenerator() {
 				return mockGenerator;
 			}
 
@@ -108,12 +107,21 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		verifyNormalMockExecution(iiArguments);
 	}
 
+	@Test
+	public void should_write_statistics_on_success() throws IOException {
+		InterfaceItArguments iiArguments = setUpIIArguments();
+		setArguments(iiArguments, underTestWithMocks);
+		setGeneratorMockToReturnFile();
+		underTestWithMocks.execute();
+		verify(mockWriter).emitText("Wrote file: " + WROTE_FILE.getAbsolutePath());
+		verifyNormalMockExecution(iiArguments);
+	}
+	
 	/**
 	 * @throws IOException
 	 */
 	private void setGeneratorMockToReturnFile() throws IOException {
-		when(mockGenerator.generateClassToFile(any(), anyString(), any(), anyString(), any(), anyInt()))
-				.thenReturn(WROTE_FILE);
+		when(mockGenerator.generateMixinJavaFile(any(), anyString(), any(), anyString(), any())).thenReturn(WROTE_FILE);
 	}
 
 	@Test
@@ -126,9 +134,13 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 
 		File saveDir = makeSaveDirectoryFile(iiArguments.getOutputRootDir().getAbsolutePath(),
 				iiArguments.getOutputPackage());
-		verify(mockGenerator).generateClassToFile(argThat(new FileMatcher(saveDir.getAbsolutePath())),
+		verify(mockGenerator).generateMixinJavaFile(argThat(new FileMatcher(saveDir.getAbsolutePath())),
 				eq(iiArguments.getTargetInterfaceName()), eq(Math.class), eq(iiArguments.getOutputPackage()),
-				eq(mockNameSource), eq(InterfaceItTask.DEFAULT_INDENTATION_SPACES));
+				eq(mockNameSource));
+
+		/*
+		 * eq(mockNameSource), eq(InterfaceItTask.DEFAULT_INDENTATION_SPACES));
+		 */
 	}
 
 	@Test
@@ -225,9 +237,8 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		File saveDir = makeSaveDirectoryFile(iiArguments.getOutputRootDir().getAbsolutePath(),
 				iiArguments.getOutputPackage());
 		verify(mockWriter).emitText("Warning: Using 'Math' by default for missing attribute targetInterfaceName.");
-		verify(mockGenerator).generateClassToFile(argThat(new FileMatcher(saveDir.getAbsolutePath())), eq("Math"),
-				eq(Math.class), eq(iiArguments.getOutputPackage()), eq(mockNameSource),
-				eq(iiArguments.getIndentationSpaces()));
+		verify(mockGenerator).generateMixinJavaFile(argThat(new FileMatcher(saveDir.getAbsolutePath())), eq("Math"),
+				eq(Math.class), eq(iiArguments.getOutputPackage()), eq(mockNameSource));
 	}
 
 	@Test
@@ -242,9 +253,8 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		File saveDir = makeSaveDirectoryFile(iiArguments.getOutputRootDir().getAbsolutePath(),
 				iiArguments.getOutputPackage());
 		verify(mockWriter).emitText("Warning: Using 'Math' by default for missing attribute targetInterfaceName.");
-		verify(mockGenerator).generateClassToFile(argThat(new FileMatcher(saveDir.getAbsolutePath())), eq("Math"),
-				eq(Math.class), eq(iiArguments.getOutputPackage()), eq(mockNameSource),
-				eq(iiArguments.getIndentationSpaces()));
+		verify(mockGenerator).generateMixinJavaFile(argThat(new FileMatcher(saveDir.getAbsolutePath())), eq("Math"),
+				eq(Math.class), eq(iiArguments.getOutputPackage()), eq(mockNameSource));
 	}
 
 	@Test
@@ -258,10 +268,9 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 
 		verify(mockWriter)
 				.emitText("Warning: Using root package by default because of missing attribute targetPackageName.");
-		verify(mockGenerator).generateClassToFile(
+		verify(mockGenerator).generateMixinJavaFile(
 				argThat(new FileMatcher(iiArguments.getOutputRootDir().getAbsolutePath())),
-				eq(iiArguments.getTargetInterfaceName()), eq(Math.class), eq(""), eq(mockNameSource),
-				eq(iiArguments.getIndentationSpaces()));
+				eq(iiArguments.getTargetInterfaceName()), eq(Math.class), eq(""), eq(mockNameSource));
 	}
 
 	@Test
@@ -297,9 +306,9 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 	private void verifyNormalMockExecution(InterfaceItArguments iiArguments) throws IOException {
 		File saveDir = makeSaveDirectoryFile(iiArguments.getOutputRootDir().getAbsolutePath(),
 				iiArguments.getOutputPackage());
-		verify(mockGenerator).generateClassToFile(argThat(new FileMatcher(saveDir.getAbsolutePath())),
+		verify(mockGenerator).generateMixinJavaFile(argThat(new FileMatcher(saveDir.getAbsolutePath())),
 				eq(iiArguments.getTargetInterfaceName()), eq(Math.class), eq(iiArguments.getOutputPackage()),
-				eq(mockNameSource), eq(iiArguments.getIndentationSpaces()));
+				eq(mockNameSource));
 	}
 
 	private void verifyBuildException(BuildException thrown, String... expectedMessages) {
@@ -396,8 +405,6 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		assertThat(result.getArgumentNameFor(method, 0)).isEqualTo("matcher");
 	}
 
-	
-	
 	@Test
 	public void should_construct_argument_name_source_from_text_file_INTEGRATION()
 			throws NoSuchMethodException, SecurityException, ClassNotFoundException, IOException {

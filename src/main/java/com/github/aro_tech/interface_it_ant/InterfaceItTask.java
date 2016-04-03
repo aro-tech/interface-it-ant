@@ -10,13 +10,15 @@ import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.interfaceit.ClassCodeGenerator;
-import org.interfaceit.DelegateMethodGenerator;
-import org.interfaceit.meta.arguments.ArgumentNameSource;
-import org.interfaceit.meta.arguments.LookupArgumentNameSource;
-import org.interfaceit.meta.arguments.SourceLineReadingArgumentNameLoader;
-import org.interfaceit.util.FileUtils;
 
+import com.github.aro_tech.interface_it.api.StatisticProvidingMixinGenerator;
+import com.github.aro_tech.interface_it.format.CodeFormatter;
+import com.github.aro_tech.interface_it.meta.arguments.ArgumentNameSource;
+import com.github.aro_tech.interface_it.meta.arguments.LookupArgumentNameSource;
+import com.github.aro_tech.interface_it.meta.arguments.SourceLineReadingArgumentNameLoader;
+import com.github.aro_tech.interface_it.policy.DeprecationPolicy;
+import com.github.aro_tech.interface_it.util.FileUtils;
+import com.github.aro_tech.interface_it.util.SourceFileReader;
 import com.github.aro_tech.interface_it_ant.io.Writer;
 
 /**
@@ -63,15 +65,15 @@ public class InterfaceItTask extends Task {
 		}
 		validateAttributes();
 
-		ClassCodeGenerator generator = makeInterfaceItGenerator();
+		StatisticProvidingMixinGenerator generator = makeInterfaceItGenerator();
 
 		try {
 			if (debug) {
 				out.emitText(this.toString());
 			}
-			File wroteFile = generator.generateClassToFile(getOutputDirectory(), getTargetInterfaceName(), getDelegateClassObject(),
-					getTargetPackageName(), makeArgumentNameSource(), getIndentationSpaces());
-			
+			File wroteFile = generator.generateMixinJavaFile(getOutputDirectory(), getTargetInterfaceName(),
+					getDelegateClassObject(), getTargetPackageName(), makeArgumentNameSource());
+
 			out.emitText("Wrote file: " + wroteFile.getAbsolutePath());
 		} catch (IOException e) {
 			handleIOException(e);
@@ -137,14 +139,14 @@ public class InterfaceItTask extends Task {
 		LookupArgumentNameSource nameSource = new LookupArgumentNameSource();
 		File archiveFile = getArchiveFile();
 		List<String> sourceLines = new ArrayList<>();
+		SourceFileReader reader = FileUtils.getDefaultSourceFileReader();
 		if (null != archiveFile && archiveFile.exists()) {
-			sourceLines = new FileUtils().readFilesInZipArchive(archiveFile,
-					makeDelegateSourcePaths());
+			sourceLines = reader.readFilesInZipArchive(archiveFile, makeDelegateSourcePaths());
 
 		} else {
 			File textFile = getTextFile();
 			if (null != textFile && textFile.exists()) {
-				sourceLines = new FileUtils().readTrimmedLinesFromFilePath(textFile.toPath());
+				sourceLines = reader.readTrimmedLinesFromFilePath(textFile.toPath());
 				new SourceLineReadingArgumentNameLoader().parseAndLoad(sourceLines, nameSource);
 			}
 		}
@@ -157,9 +159,9 @@ public class InterfaceItTask extends Task {
 	private String[] makeDelegateSourcePaths() throws ClassNotFoundException {
 		Class<?> delegate = this.getDelegateClassObject();
 		List<String> args = new ArrayList<>();
-		while(null != delegate && delegate != Object.class) {
+		while (null != delegate && delegate != Object.class) {
 			String canonicalClassName = delegate.getName();
-			args.add(canonicalClassNameToJavaFilePath(canonicalClassName));	
+			args.add(canonicalClassNameToJavaFilePath(canonicalClassName));
 			delegate = delegate.getSuperclass();
 		}
 		String[] sourcePaths = args.toArray(new String[0]);
@@ -261,8 +263,9 @@ public class InterfaceItTask extends Task {
 		return property == null || property.trim().length() < 1;
 	}
 
-	protected ClassCodeGenerator makeInterfaceItGenerator() {
-		return new DelegateMethodGenerator();
+	protected StatisticProvidingMixinGenerator makeInterfaceItGenerator() {
+		return new StatisticProvidingMixinGenerator(FileUtils.getDefaultFileSystem(),
+				DeprecationPolicy.PROPAGATE_DEPRECATION, new CodeFormatter(getIndentationSpaces()));
 	}
 
 	/**

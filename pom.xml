@@ -4,7 +4,7 @@
 
 	<groupId>com.github.aro-tech</groupId>
 	<artifactId>interface-it-ant</artifactId>
-	<version>0.8.1</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Ant task to create an interface which delegates to a class's static methods</description>
@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>com.github.aro-tech</groupId>
 			<artifactId>interface-it</artifactId>
-			<version>0.8.0</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.ant</groupId>
