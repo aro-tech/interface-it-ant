@@ -26,7 +26,14 @@ v1.0.1: [Release notes on github] (https://github.com/aro-tech/interface-it-ant/
 		
 See the [full example code here](https://github.com/aro-tech/interface-it-ant/blob/master/examples/build.xml "full example code").
 
- 
+##Tag Attributes
+ * outputSourceRootDirectory - The root of the source tree where the generated interface's .java file will be written in it's package directory. (required)
+ * delegateClass - fully-qualified class name of the delegate class to be wrapped (required)
+ * targetInterfaceName - The name of the generated interface (optional - defaults to the short name of the delegate class)  
+ * targetPackageName - Package of the generated interface (recommended - defaults to root package) 
+ * sourceTextFilePath - Path of a .java or .txt file containing method signatures to be read to recover argument names not retained by the compiler (optional - should not be used in the same tag as sourceArchivePath)
+ * sourceArchivePath - Path of a .jar or .zip file containing source files in the package hierarchy with method signatures to be read to recover argument names not retained by the compiler (optional - should not be used in the same tag as sourceTextFilePath)
+* ignoreDeprecated - true or false - if true, deprecated methods will be ignored, if false deprecated delegate calls to them will be generated (optional - defaults to false) 
 
 ##Blog
 [![The Green Bar](https://img.shields.io/badge/My_Blog:-The_Green_Bar-brightgreen.svg)](https://thegreenbar.wordpress.com/)
