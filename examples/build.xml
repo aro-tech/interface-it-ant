@@ -7,7 +7,8 @@
 	
 	
 	<property name="task.dir" value="target\" />
-	<property name="interface-it.jar.dir" value="${repository.dir}\com\github\aro-tech\interface-it\0.8.0\" />
+	<!-- For version 1.0.1 or greater of interface-it-ant:  -->
+	<property name="interface-it.jar.dir" value="${repository.dir}\com\github\aro-tech\interface-it\1.0.1\" />
 	<property name="mockito.dir" value="${repository.dir}\org\mockito\mockito-core\2.0.44-beta\" />
 	<property name="bytebuddy.dir" value="${repository.dir}\net\bytebuddy\byte-buddy\1.2.3\" />
 	<property name="objenesis.dir" value="${repository.dir}\org\objenesis\objenesis\2.1\" />
@@ -69,6 +70,7 @@
 			targetInterfaceName="Mockito" 
 			targetPackageName="${target.package}"
 			sourceArchivePath="${mockito.sources.jar.path}"
+			ignoreDeprecated="true"
 		/>
 		
 
