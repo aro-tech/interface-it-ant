@@ -13,11 +13,11 @@ public interface Writer {
 	 * Write text to output
 	 * @param text Text to emit
 	 */
-	public void emitText(String text);
+	void emitText(String text);
 	
 	/**
 	 * Write a stack trace to output
 	 * @param t
 	 */
-	public void emitThrowable(Throwable t);
+	void emitThrowable(Throwable t);
 }
