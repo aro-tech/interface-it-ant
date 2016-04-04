@@ -17,6 +17,7 @@ import com.github.aro_tech.interface_it.meta.arguments.ArgumentNameSource;
 import com.github.aro_tech.interface_it.meta.arguments.LookupArgumentNameSource;
 import com.github.aro_tech.interface_it.meta.arguments.SourceLineReadingArgumentNameLoader;
 import com.github.aro_tech.interface_it.policy.DeprecationPolicy;
+import com.github.aro_tech.interface_it.statistics.GenerationStatistics;
 import com.github.aro_tech.interface_it.util.FileUtils;
 import com.github.aro_tech.interface_it.util.SourceFileReader;
 import com.github.aro_tech.interface_it_ant.io.Writer;
@@ -75,6 +76,10 @@ public class InterfaceItTask extends Task {
 					getDelegateClassObject(), getTargetPackageName(), makeArgumentNameSource());
 
 			out.emitText("Wrote file: " + wroteFile.getAbsolutePath());
+			GenerationStatistics stats = generator.getStatistics();
+			if (null != stats) {
+				out.emitText(stats.summarizeStatistics());
+			}
 		} catch (IOException e) {
 			handleIOException(e);
 		} catch (ClassNotFoundException e) {

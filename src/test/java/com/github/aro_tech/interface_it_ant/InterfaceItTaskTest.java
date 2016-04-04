@@ -11,6 +11,7 @@ import org.mockito.ArgumentMatcher;
 
 import com.github.aro_tech.interface_it.api.StatisticProvidingMixinGenerator;
 import com.github.aro_tech.interface_it.meta.arguments.ArgumentNameSource;
+import com.github.aro_tech.interface_it.statistics.GenerationStatistics;
 import com.github.aro_tech.interface_it_ant.io.Writer;
 import com.github.aro_tech.interface_it_ant.wrappers.AssertJ;
 import com.github.aro_tech.interface_it_ant.wrappers.Mockito;
@@ -112,11 +113,37 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		InterfaceItArguments iiArguments = setUpIIArguments();
 		setArguments(iiArguments, underTestWithMocks);
 		setGeneratorMockToReturnFile();
+		GenerationStatistics stats = new GenerationStatistics();
+		stats.incrementMethodCount();
+		stats.incrementMethodCount();
+		stats.incrementConstantCount();
+		when(mockGenerator.getStatistics()).thenReturn(stats);
 		underTestWithMocks.execute();
-		verify(mockWriter).emitText("Wrote file: " + WROTE_FILE.getAbsolutePath());
+		verify(mockWriter, atLeastOnce()).emitText(contains("1", "2", "method", "constant"));
 		verifyNormalMockExecution(iiArguments);
 	}
-	
+
+	private String contains(final String...expectedParts) {
+		return argThat(
+				new ArgumentMatcher<String>() {
+
+					@Override
+					public boolean matches(Object argument) {
+
+						return contains(argument.toString().toLowerCase(), expectedParts);
+					}
+
+					private boolean contains(String toCheck, String... args) {
+						for (String arg : args) {
+							if (!toCheck.contains(arg)) {
+								return false;
+							}
+						}
+						return true;
+					}
+				});
+	}
+
 	/**
 	 * @throws IOException
 	 */
