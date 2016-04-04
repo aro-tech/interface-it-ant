@@ -33,7 +33,7 @@ See the [full example code here](https://github.com/aro-tech/interface-it-ant/bl
  * targetPackageName - Package of the generated interface (recommended - defaults to root package) 
  * sourceTextFilePath - Path of a .java or .txt file containing method signatures to be read to recover argument names not retained by the compiler (optional - should not be used in the same tag as sourceArchivePath)
  * sourceArchivePath - Path of a .jar or .zip file containing source files in the package hierarchy with method signatures to be read to recover argument names not retained by the compiler (optional - should not be used in the same tag as sourceTextFilePath)
-* ignoreDeprecated - true or false - if true, deprecated methods will be ignored, if false deprecated delegate calls to them will be generated (optional - defaults to false) 
+ * ignoreDeprecated - true or false - if true, deprecated methods will be ignored, if false deprecated delegate calls to them will be generated (optional - defaults to false) 
 
 ##Blog
 [![The Green Bar](https://img.shields.io/badge/My_Blog:-The_Green_Bar-brightgreen.svg)](https://thegreenbar.wordpress.com/)
