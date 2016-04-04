@@ -40,12 +40,13 @@ public class InterfaceItTask extends Task {
 	private String outputSourceRootDirectory;
 	private String targetInterfaceName;
 	private String targetPackageName;
+	private boolean ignoreDeprecated = false;
 	private int indentationSpaces = DEFAULT_INDENTATION_SPACES;
 	private Writer out = new Writer() {
 
 		@Override
 		public void emitThrowable(Throwable t) {
-			out.emitThrowable(t);
+			t.printStackTrace(System.out);
 		}
 
 		@Override
@@ -270,7 +271,17 @@ public class InterfaceItTask extends Task {
 
 	protected StatisticProvidingMixinGenerator makeInterfaceItGenerator() {
 		return new StatisticProvidingMixinGenerator(FileUtils.getDefaultFileSystem(),
-				DeprecationPolicy.PROPAGATE_DEPRECATION, new CodeFormatter(getIndentationSpaces()));
+				getDeprecationPolicy(), new CodeFormatter(getIndentationSpaces()));
+	}
+
+	/**
+	 * @return The deprecation policy to use
+	 */
+	protected DeprecationPolicy getDeprecationPolicy() {
+		if(ignoreDeprecated) {
+			return DeprecationPolicy.IGNORE_DEPRECATED_METHODS;			
+		}
+		return DeprecationPolicy.PROPAGATE_DEPRECATION;
 	}
 
 	/**
@@ -417,4 +428,20 @@ public class InterfaceItTask extends Task {
 	void setWriter(Writer out) {
 		this.out = out;
 	}
+
+	/**
+	 * @return the ignoreDeprecated
+	 */
+	public boolean isIgnoreDeprecated() {
+		return ignoreDeprecated;
+	}
+
+	/**
+	 * @param ignoreDeprecated the ignoreDeprecated to set
+	 */
+	public void setIgnoreDeprecated(boolean ignoreDeprecated) {
+		this.ignoreDeprecated = ignoreDeprecated;
+	}
+	
+	
 }

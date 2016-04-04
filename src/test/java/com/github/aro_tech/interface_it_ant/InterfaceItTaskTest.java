@@ -11,6 +11,7 @@ import org.mockito.ArgumentMatcher;
 
 import com.github.aro_tech.interface_it.api.StatisticProvidingMixinGenerator;
 import com.github.aro_tech.interface_it.meta.arguments.ArgumentNameSource;
+import com.github.aro_tech.interface_it.policy.DeprecationPolicy;
 import com.github.aro_tech.interface_it.statistics.GenerationStatistics;
 import com.github.aro_tech.interface_it_ant.io.Writer;
 import com.github.aro_tech.interface_it_ant.wrappers.AssertJ;
@@ -443,6 +444,25 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		ArgumentNameSource result = underTest.makeArgumentNameSource();
 		Method method = java.net.URLEncoder.class.getMethod("encode", String.class);
 		assertThat(result.getArgumentNameFor(method, 0)).isEqualTo("stringToEncode");
+	}
+	
+	@Test
+	public void should_use_propagation_policy_by_default() {
+		assertThat(underTest.getDeprecationPolicy()).isEqualTo(DeprecationPolicy.PROPAGATE_DEPRECATION);
+	}
+
+	@Test
+	public void should_use_propagation_policy_if_ignore_set_to_false() {
+		InterfaceItTask task = new InterfaceItTask();
+		task.setIgnoreDeprecated(false);
+		assertThat(task.getDeprecationPolicy()).isEqualTo(DeprecationPolicy.PROPAGATE_DEPRECATION);
+	}
+	
+	@Test
+	public void should_use_ignore_policy_if_ignore_set_to_true() {
+		InterfaceItTask task = new InterfaceItTask();
+		task.setIgnoreDeprecated(true);
+		assertThat(task.getDeprecationPolicy()).isEqualTo(DeprecationPolicy.IGNORE_DEPRECATED_METHODS);
 	}
 
 }
