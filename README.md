@@ -12,6 +12,8 @@ v1.0.1: [Release notes on github] (https://github.com/aro-tech/interface-it-ant/
 
 [Binary downloads] (https://oss.sonatype.org/content/groups/public/com/github/aro-tech/interface-it-ant/1.0.1/ "binaries")
 
+[Dependency download (jar file for interface-it)] (https://oss.sonatype.org/content/groups/public/com/github/aro-tech/interface-it/1.0.1/interface-it-1.0.1.jar "interface-it jar")
+
 ##Example usage in a build.xml file
 
 ```xml
