@@ -3,12 +3,8 @@
 	<property name="repository.dir" value="YOUR HOME DIRECTORY\.m2\repository" />
 
 	<property name="project.dir" value="." />
-	<property name="output.java.root" value="${project.dir}/src/test/java" />
-	
-	
+	<property name="output.java.root" value="${project.dir}/src/test/java" />	
 	<property name="task.dir" value="target\" />
-	<!-- For version 1.0.1 or greater of interface-it-ant:  -->
-	<property name="interface-it.jar.dir" value="${repository.dir}\com\github\aro-tech\interface-it\1.0.1\" />
 	<property name="mockito.dir" value="${repository.dir}\org\mockito\mockito-core\2.0.44-beta\" />
 	<property name="bytebuddy.dir" value="${repository.dir}\net\bytebuddy\byte-buddy\1.2.3\" />
 	<property name="objenesis.dir" value="${repository.dir}\org\objenesis\objenesis\2.1\" />
@@ -19,16 +15,24 @@
 	<property name="junit.dir" value="${repository.dir}\junit\junit\4.12\" />
 	<property name="junit.source.path" value="${project.dir}\test\resources\exampleSrc.txt" />
 	<property name="target.package" value="com.github.aro_tech.interface_it_ant.wrappers" />
-	
+	<!-- Needed for version 1.0.1 and earlier:
+	<property name="interface-it.jar.dir" value="${repository.dir}\com\github\aro-tech\interface-it\1.0.1\" />
+	-->
 	<path id="class.path">
-		<!-- Path for the task itself, and its dependencies: -->
+		<!-- Path for the task itself -->
+		<fileset dir="${task.dir}">
+			<include name="**/*with-dependencies.jar" />
+		</fileset>
+
+		<!-- Needed for version 1.0.1 and earlier, path for the task itself, and its dependencies: 
 		<fileset dir="${task.dir}">
 			<include name="**/*.jar" />
 		</fileset>
 		<fileset dir="${interface-it.jar.dir}">
 			<include name="**/*.jar" />
 		</fileset>
-
+		-->
+		
 		<!-- Path necessary for loading the delegate classes: -->
 		<!-- For Mockito: -->
 		<fileset dir="${mockito.dir}">
