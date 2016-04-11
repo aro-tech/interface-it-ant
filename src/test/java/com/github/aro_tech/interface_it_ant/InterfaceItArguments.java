@@ -14,14 +14,28 @@ public class InterfaceItArguments {
 	private final String delegateClassName;
 	private final String targetInterfaceName;
 	private final Integer indentationSpaces;
+	private final String targetInterfaceParentName;
 
+	
+
+	/**
+	 * Constructor
+	 * @param outputRootDir
+	 * @param outputPackage
+	 * @param delegateClassName
+	 * @param targetInterfaceName
+	 * @param indentationSpaces
+	 * @param targetInterfaceParentName
+	 */
 	public InterfaceItArguments(File outputRootDir, String outputPackage, String delegateClassName,
-			String targetInterfaceName, Integer indentationSpaces) {
+			String targetInterfaceName, Integer indentationSpaces, String targetInterfaceParentName) {
+		super();
 		this.outputRootDir = outputRootDir;
 		this.outputPackage = outputPackage;
 		this.delegateClassName = delegateClassName;
 		this.targetInterfaceName = targetInterfaceName;
 		this.indentationSpaces = indentationSpaces;
+		this.targetInterfaceParentName = targetInterfaceParentName;
 	}
 
 	/**
@@ -59,12 +73,13 @@ public class InterfaceItArguments {
 		return indentationSpaces;
 	}
 
-//	public String getDelegateClassPackage() {
-//		int lastDotIx = delegateClassName.lastIndexOf('.');
-//		if(lastDotIx < 1) {
-//			return "";
-//		}
-//		return delegateClassName.substring(0, lastDotIx);
-//	}
+	/**
+	 * @return the targetInterfaceParentName
+	 */
+	public String getTargetInterfaceParentName() {
+		return targetInterfaceParentName;
+	}
+
+
 
 }

@@ -11,7 +11,9 @@ import java.util.List;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
+import com.github.aro_tech.interface_it.api.MultiFileOutputOptions;
 import com.github.aro_tech.interface_it.api.StatisticProvidingMixinGenerator;
+import com.github.aro_tech.interface_it.api.options.OptionsForSplittingChildAndParent;
 import com.github.aro_tech.interface_it.format.CodeFormatter;
 import com.github.aro_tech.interface_it.meta.arguments.ArgumentNameSource;
 import com.github.aro_tech.interface_it.meta.arguments.LookupArgumentNameSource;
@@ -42,6 +44,8 @@ public class InterfaceItTask extends Task {
 	private String targetPackageName;
 	private boolean ignoreDeprecated = false;
 	private int indentationSpaces = DEFAULT_INDENTATION_SPACES;
+	private String targetInterfaceParentName = null;
+
 	private Writer out = new Writer() {
 
 		@Override
@@ -73,13 +77,23 @@ public class InterfaceItTask extends Task {
 			if (debug) {
 				out.emitText(this.toString());
 			}
-			File wroteFile = generator.generateMixinJavaFile(getOutputDirectory(), getTargetInterfaceName(),
-					getDelegateClassObject(), getTargetPackageName(), makeArgumentNameSource());
 
-			out.emitText("Wrote file: " + wroteFile.getAbsolutePath());
-			GenerationStatistics stats = generator.getStatistics();
-			if (null != stats) {
-				out.emitText(stats.summarizeStatistics());
+			if (null == this.targetInterfaceParentName || targetInterfaceParentName.trim().length() < 1) {
+				File wroteFile = generator.generateMixinJavaFile(getOutputDirectory(), getTargetInterfaceName(),
+						getDelegateClassObject(), getTargetPackageName(), makeArgumentNameSource());
+
+				GenerationStatistics stats = generator.getStatistics();
+				emitGenerationResult(wroteFile, stats);
+			} else {
+				MultiFileOutputOptions options = new OptionsForSplittingChildAndParent(this.targetPackageName,
+						getOutputDirectory(), this.targetInterfaceName, this.targetInterfaceParentName,
+						this.getDelegateClassObject());
+				List<File> results = generator.generateMixinJavaFiles(options, makeArgumentNameSource(),
+						this.getDelegateClassObject(), this.getDelegateClassObject().getSuperclass());
+				for (File result : results) {
+					emitGenerationResult(result,
+							generator.getStatisticsFor(result.getName()).orElse(generator.getStatistics()));
+				}
 			}
 		} catch (IOException e) {
 			handleIOException(e);
@@ -87,6 +101,13 @@ public class InterfaceItTask extends Task {
 			handleClassNotFound(e);
 		} catch (Throwable t) {
 			handleUnexpectedError(t);
+		}
+	}
+
+	private void emitGenerationResult(File wroteFile, GenerationStatistics stats) {
+		out.emitText("Wrote file: " + wroteFile.getAbsolutePath());
+		if (null != stats) {
+			out.emitText(stats.summarizeStatistics());
 		}
 	}
 
@@ -270,16 +291,16 @@ public class InterfaceItTask extends Task {
 	}
 
 	protected StatisticProvidingMixinGenerator makeInterfaceItGenerator() {
-		return new StatisticProvidingMixinGenerator(FileUtils.getDefaultFileSystem(),
-				getDeprecationPolicy(), new CodeFormatter(getIndentationSpaces()));
+		return new StatisticProvidingMixinGenerator(FileUtils.getDefaultFileSystem(), getDeprecationPolicy(),
+				new CodeFormatter(getIndentationSpaces()));
 	}
 
 	/**
 	 * @return The deprecation policy to use
 	 */
 	protected DeprecationPolicy getDeprecationPolicy() {
-		if(ignoreDeprecated) {
-			return DeprecationPolicy.IGNORE_DEPRECATED_METHODS;			
+		if (ignoreDeprecated) {
+			return DeprecationPolicy.IGNORE_DEPRECATED_METHODS;
 		}
 		return DeprecationPolicy.PROPAGATE_DEPRECATION;
 	}
@@ -430,6 +451,21 @@ public class InterfaceItTask extends Task {
 	}
 
 	/**
+	 * @return the targetInterfaceParentName
+	 */
+	public String getTargetInterfaceParentName() {
+		return targetInterfaceParentName;
+	}
+
+	/**
+	 * @param targetInterfaceParentName
+	 *            the targetInterfaceParentName to set
+	 */
+	public void setTargetInterfaceParentName(String targetInterfaceParentName) {
+		this.targetInterfaceParentName = targetInterfaceParentName;
+	}
+
+	/**
 	 * @return the ignoreDeprecated
 	 */
 	public boolean isIgnoreDeprecated() {
@@ -437,11 +473,11 @@ public class InterfaceItTask extends Task {
 	}
 
 	/**
-	 * @param ignoreDeprecated the ignoreDeprecated to set
+	 * @param ignoreDeprecated
+	 *            the ignoreDeprecated to set
 	 */
 	public void setIgnoreDeprecated(boolean ignoreDeprecated) {
 		this.ignoreDeprecated = ignoreDeprecated;
 	}
-	
-	
+
 }

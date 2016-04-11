@@ -4,7 +4,7 @@
 
 	<groupId>com.github.aro-tech</groupId>
 	<artifactId>interface-it-ant</artifactId>
-	<version>1.0.2</version>
+	<version>1.1.0</version>
 	<packaging>jar</packaging>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Ant task to create an interface which delegates to a class's static methods</description>
@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>com.github.aro-tech</groupId>
 			<artifactId>interface-it</artifactId>
-			<version>1.0.1</version>
+			<version>1.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.ant</groupId>
@@ -63,9 +63,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>2.0.44-beta</version>
+			<groupId>com.github.aro-tech</groupId>
+			<artifactId>extended-mockito</artifactId>
+			<version>2.0.44-beta.2</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

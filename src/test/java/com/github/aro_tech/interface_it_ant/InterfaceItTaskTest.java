@@ -3,19 +3,22 @@ package com.github.aro_tech.interface_it_ant;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Optional;
 
 import org.apache.tools.ant.BuildException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+import org.mockito.internal.verification.VerificationModeFactory;
 
+import com.github.aro_tech.extended_mockito.ExtendedMockito;
 import com.github.aro_tech.interface_it.api.StatisticProvidingMixinGenerator;
 import com.github.aro_tech.interface_it.meta.arguments.ArgumentNameSource;
 import com.github.aro_tech.interface_it.policy.DeprecationPolicy;
 import com.github.aro_tech.interface_it.statistics.GenerationStatistics;
 import com.github.aro_tech.interface_it_ant.io.Writer;
 import com.github.aro_tech.interface_it_ant.wrappers.AssertJ;
-import com.github.aro_tech.interface_it_ant.wrappers.Mockito;
 
 /**
  * Unit and integration tests for InterfaceItTask
@@ -23,7 +26,7 @@ import com.github.aro_tech.interface_it_ant.wrappers.Mockito;
  * @author aro_tech
  *
  */
-public class InterfaceItTaskTest implements AssertJ, Mockito {
+public class InterfaceItTaskTest implements AssertJ, ExtendedMockito {
 	private static final String NON_EXISTENT_CLASS_WITH_NO_PACKAGE_NAME = "NonExistentClassWithNoPackageName";
 	private static final String NON_EXISTENT_CLASS_NAME = "org.bogus.DoesNotExist";
 	private static final String TEST_TARGET_INTERFACE_NAME = "MyMath";
@@ -35,7 +38,8 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 	ArgumentNameSource mockNameSource = mock(ArgumentNameSource.class);
 	InterfaceItTask underTestWithMocks;
 	Writer mockWriter = mock(Writer.class);
-	private static final File WROTE_FILE = new File("./Whatever.java");
+	private static final File WROTE_FILE = new File("./MockitoMixin.java");
+	private static final File PARENT_FILE = new File("./MatchersMixin.java");
 
 	@Before
 	public void setUp() throws Exception {
@@ -99,6 +103,61 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		verifyNormalMockExecution(iiArguments);
 	}
 
+	@SuppressWarnings("serial")
+	@Test
+	public void should_call_generator_with_expected_arguments_for_parent_child_mixin_generation() throws IOException {
+		setUpParentChildGeneration();
+		setUpParentChildStats();
+
+		underTestWithMocks.execute();
+
+		verify(mockGenerator).generateMixinJavaFiles(
+				toStringContainsAllOf(
+						"OptionsForSplittingChildAndParent [targetPackage=org.example.test, " + "saveDirectory=",
+						".\\dummySourceRoot\\org\\example\\test, childMixinName=MyMath, parentMixinName=ParentMixin, childClass=class org.mockito.Mockito"
+								+ ", getMethodFilter(class org.mockito.Mockito)=com.github.aro_tech.interface_it.api.options.OptionsForSplittingChildAndParent$$Lambda"),
+				eq(mockNameSource), eq(org.mockito.Mockito.class), eq(org.mockito.Matchers.class));
+	}
+
+	@Test
+	public void should_emit_results_for_parent_child_mixin_generation() throws IOException {
+		setUpParentChildGeneration();
+		setUpParentChildStats();
+
+		underTestWithMocks.execute();
+
+		verify(this.mockWriter, VerificationModeFactory.atLeast(0)).emitText(contains("Warning"));
+
+		verify(this.mockWriter).emitText(containsAllOf("Wrote file:", "\\MockitoMixin.java"));
+		verify(this.mockWriter).emitText(containsAllOf("2 methods"));
+		verify(this.mockWriter).emitText(containsAllOf("1 method"));
+	}
+
+	private void setUpParentChildStats() {
+		GenerationStatistics stats1 = new GenerationStatistics();
+		stats1.incrementConstantCount();
+		stats1.incrementMethodCount();
+		when(mockGenerator.getStatisticsFor(WROTE_FILE.getName())).thenReturn(Optional.of(stats1));
+		GenerationStatistics stats2 = new GenerationStatistics();
+		stats2.incrementMethodCount();
+		stats2.incrementMethodCount();
+		when(mockGenerator.getStatisticsFor(PARENT_FILE.getName())).thenReturn(Optional.of(stats2));
+	}
+
+	private void setUpParentChildGeneration() throws IOException {
+		InterfaceItArguments iiArguments = new InterfaceItArguments(new File(DUMMY_SOURCE_ROOT), TEST_OUTPUT_PACKAGE,
+				"org.mockito.Mockito", TEST_TARGET_INTERFACE_NAME, 6, "ParentMixin");
+		;
+		setArguments(iiArguments, underTestWithMocks);
+		when(mockGenerator.generateMixinJavaFiles(any(), any(), eq(org.mockito.Mockito.class),
+				eq(org.mockito.Matchers.class))).thenReturn(new ArrayList<File>() {
+					{
+						add(WROTE_FILE);
+						add(PARENT_FILE);
+					}
+				});
+	}
+
 	@Test
 	public void should_write_file_path_on_success() throws IOException {
 		InterfaceItArguments iiArguments = setUpIIArguments();
@@ -120,29 +179,8 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		stats.incrementConstantCount();
 		when(mockGenerator.getStatistics()).thenReturn(stats);
 		underTestWithMocks.execute();
-		verify(mockWriter, atLeastOnce()).emitText(contains("1", "2", "method", "constant"));
+		verify(mockWriter, atLeastOnce()).emitText(containsAllOf("1", "2", "method", "constant"));
 		verifyNormalMockExecution(iiArguments);
-	}
-
-	private String contains(final String...expectedParts) {
-		return argThat(
-				new ArgumentMatcher<String>() {
-
-					@Override
-					public boolean matches(Object argument) {
-
-						return contains(argument.toString().toLowerCase(), expectedParts);
-					}
-
-					private boolean contains(String toCheck, String... args) {
-						for (String arg : args) {
-							if (!toCheck.contains(arg)) {
-								return false;
-							}
-						}
-						return true;
-					}
-				});
 	}
 
 	/**
@@ -371,7 +409,7 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 	private InterfaceItArguments groupIIArguments(File outputRootDir, String outputPackage, String delegateClassName,
 			String targetInterfaceName, Integer indentationSpaces) {
 		InterfaceItArguments iiArguments = new InterfaceItArguments(outputRootDir, outputPackage, delegateClassName,
-				targetInterfaceName, indentationSpaces);
+				targetInterfaceName, indentationSpaces, null);
 		return iiArguments;
 	}
 
@@ -384,6 +422,7 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 			underTestToUse.setIndentationSpaces(indentationSpaces);
 		}
 		underTestToUse.setTargetPackageName(parameterObject.getOutputPackage());
+		underTestToUse.setTargetInterfaceParentName(parameterObject.getTargetInterfaceParentName());
 	}
 
 	private void setOutputRootDir(InterfaceItArguments parameterObject, InterfaceItTask underTestToUse) {
@@ -445,7 +484,7 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		Method method = java.net.URLEncoder.class.getMethod("encode", String.class);
 		assertThat(result.getArgumentNameFor(method, 0)).isEqualTo("stringToEncode");
 	}
-	
+
 	@Test
 	public void should_use_propagation_policy_by_default() {
 		assertThat(underTest.getDeprecationPolicy()).isEqualTo(DeprecationPolicy.PROPAGATE_DEPRECATION);
@@ -457,7 +496,7 @@ public class InterfaceItTaskTest implements AssertJ, Mockito {
 		task.setIgnoreDeprecated(false);
 		assertThat(task.getDeprecationPolicy()).isEqualTo(DeprecationPolicy.PROPAGATE_DEPRECATION);
 	}
-	
+
 	@Test
 	public void should_use_ignore_policy_if_ignore_set_to_true() {
 		InterfaceItTask task = new InterfaceItTask();
