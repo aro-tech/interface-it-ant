@@ -85,11 +85,17 @@ public class InterfaceItTask extends Task {
 				GenerationStatistics stats = generator.getStatistics();
 				emitGenerationResult(wroteFile, stats);
 			} else {
+				final Class<?> delegateClassObject = this.getDelegateClassObject();
+				final Class<?> superclass = delegateClassObject.getSuperclass();
+				if(null == superclass || java.lang.Object.class.equals(superclass)) {
+					out.emitText("Execution halted without generation. The attribute 'targetInterfaceParentName' should be empty if the delegate class has no superclass other than Object.");
+					return;
+				}
 				MultiFileOutputOptions options = new OptionsForSplittingChildAndParent(this.targetPackageName,
 						getOutputDirectory(), this.targetInterfaceName, this.targetInterfaceParentName,
-						this.getDelegateClassObject());
+						delegateClassObject);
 				List<File> results = generator.generateMixinJavaFiles(options, makeArgumentNameSource(),
-						this.getDelegateClassObject(), this.getDelegateClassObject().getSuperclass());
+						delegateClassObject, superclass);
 				for (File result : results) {
 					emitGenerationResult(result,
 							generator.getStatisticsFor(result.getName()).orElse(generator.getStatistics()));

@@ -103,7 +103,6 @@ public class InterfaceItTaskTest implements AssertJ, ExtendedMockito {
 		verifyNormalMockExecution(iiArguments);
 	}
 
-	@SuppressWarnings("serial")
 	@Test
 	public void should_call_generator_with_expected_arguments_for_parent_child_mixin_generation() throws IOException {
 		setUpParentChildGeneration();
@@ -133,6 +132,30 @@ public class InterfaceItTaskTest implements AssertJ, ExtendedMockito {
 		verify(this.mockWriter).emitText(containsAllOf("1 method"));
 	}
 
+	@Test
+	public void parent_child_should_fail_with_message_if_superclass_is_Object() {
+		InterfaceItArguments iiArguments = new InterfaceItArguments(new File(DUMMY_SOURCE_ROOT), TEST_OUTPUT_PACKAGE,
+				"org.mockito.Matchers", "ChildMixin", 6, "ParentMixin");
+		;
+		setArguments(iiArguments, underTestWithMocks);
+		underTestWithMocks.execute();
+		verifyNoMoreInteractions(mockGenerator);
+		verify(this.mockWriter)
+				.emitText(containsAllOf("Execution halted", "attribute 'targetInterfaceParentName' should be empty"));
+	}
+
+	@Test
+	public void parent_child_should_fail_with_message_if_delegate_class_is_Object() {
+		InterfaceItArguments iiArguments = new InterfaceItArguments(new File(DUMMY_SOURCE_ROOT), TEST_OUTPUT_PACKAGE,
+				"java.lang.Object", "ChildMixin", 6, "ParentMixin");
+		;
+		setArguments(iiArguments, underTestWithMocks);
+		underTestWithMocks.execute();
+		verifyNoMoreInteractions(mockGenerator);
+		verify(this.mockWriter)
+				.emitText(containsAllOf("Execution halted", "attribute 'targetInterfaceParentName' should be empty"));
+	}
+
 	private void setUpParentChildStats() {
 		GenerationStatistics stats1 = new GenerationStatistics();
 		stats1.incrementConstantCount();
@@ -151,6 +174,8 @@ public class InterfaceItTaskTest implements AssertJ, ExtendedMockito {
 		setArguments(iiArguments, underTestWithMocks);
 		when(mockGenerator.generateMixinJavaFiles(any(), any(), eq(org.mockito.Mockito.class),
 				eq(org.mockito.Matchers.class))).thenReturn(new ArrayList<File>() {
+					private static final long serialVersionUID = 1L;
+
 					{
 						add(WROTE_FILE);
 						add(PARENT_FILE);
