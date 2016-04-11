@@ -6,11 +6,11 @@ Requires Java 8 (or higher)
 
 ##Latest release
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.aro-tech/interface-it-ant/badge.svg)](http://search.maven.org/#artifactdetails|com.github.aro-tech|interface-it-ant|1.0.2|jar)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.aro-tech/interface-it-ant/badge.svg)](http://search.maven.org/#artifactdetails|com.github.aro-tech|interface-it-ant|1.1.0|jar)
 
-v1.0.2: [Release notes on github] (https://github.com/aro-tech/interface-it-ant/releases/tag/v1.0.2)
+v1.1.0: [Release notes on github] (https://github.com/aro-tech/interface-it-ant/releases/tag/v1.1.0)
 
-[Binary downloads] (https://oss.sonatype.org/content/groups/public/com/github/aro-tech/interface-it-ant/1.0.2/ "binaries")
+[Binary downloads] (https://oss.sonatype.org/content/groups/public/com/github/aro-tech/interface-it-ant/1.1.0/ "binaries")
 
 
 ##Example usage in a build.xml file
@@ -35,6 +35,7 @@ See the [full example code here](https://github.com/aro-tech/interface-it-ant/bl
  * **sourceTextFilePath** - Path of a .java or .txt file containing method signatures to be read to recover argument names not retained by the compiler (optional - should not be used in the same tag as sourceArchivePath)
  * **sourceArchivePath** - Path of a .jar or .zip file containing source files in the package hierarchy with method signatures to be read to recover argument names not retained by the compiler (optional - should not be used in the same tag as sourceTextFilePath)
  * **ignoreDeprecated** - true or false - if true, deprecated methods will be ignored, if false deprecated delegate calls to them will be generated (optional - defaults to false) 
-
+ * **targetInterfaceParentName** - If this attribute is non-empty, the task will build 2 separate mixins, one for the *delegateClass* itself and one for its superclass. The mixin for the *delegateClass* will extend the mixin generated for its superclass. (optional - default behavior is to build one mixin which includes any superclass methods)
+ 
 ##Blog
 [![The Green Bar](https://img.shields.io/badge/My_Blog:-The_Green_Bar-brightgreen.svg)](https://thegreenbar.wordpress.com/)
