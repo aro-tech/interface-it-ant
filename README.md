@@ -6,11 +6,11 @@ Requires Java 8 (or higher)
 
 ##Latest release
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.aro-tech/interface-it-ant/badge.svg)](http://search.maven.org/#artifactdetails|com.github.aro-tech|interface-it-ant|1.1.1|jar)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.aro-tech/interface-it-ant/badge.svg)](http://search.maven.org/#artifactdetails|com.github.aro-tech|interface-it-ant|1.1.2|jar)
 
-v1.1.1: [Release notes on github] (https://github.com/aro-tech/interface-it-ant/releases/tag/v1.1.1)
+v1.1.2: [Release notes on github] (https://github.com/aro-tech/interface-it-ant/releases/tag/v1.1.2)
 
-[Binary downloads] (https://oss.sonatype.org/content/groups/public/com/github/aro-tech/interface-it-ant/1.1.1/ "binaries")
+[Binary downloads] (https://oss.sonatype.org/content/groups/public/com/github/aro-tech/interface-it-ant/1.1.2/ "binaries")
 
 
 ##Example usage in a build.xml file

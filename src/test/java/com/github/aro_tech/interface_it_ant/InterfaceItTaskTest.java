@@ -18,7 +18,7 @@ import com.github.aro_tech.interface_it.meta.arguments.ArgumentNameSource;
 import com.github.aro_tech.interface_it.policy.DeprecationPolicy;
 import com.github.aro_tech.interface_it.statistics.GenerationStatistics;
 import com.github.aro_tech.interface_it_ant.io.Writer;
-import com.github.aro_tech.interface_it_ant.wrappers.AssertJ;
+import com.github.aro_tech.tdd_mixins.AllAssertions;
 
 /**
  * Unit and integration tests for InterfaceItTask
@@ -26,7 +26,7 @@ import com.github.aro_tech.interface_it_ant.wrappers.AssertJ;
  * @author aro_tech
  *
  */
-public class InterfaceItTaskTest implements AssertJ, ExtendedMockito {
+public class InterfaceItTaskTest implements AllAssertions, ExtendedMockito {
 	private static final String NON_EXISTENT_CLASS_WITH_NO_PACKAGE_NAME = "NonExistentClassWithNoPackageName";
 	private static final String NON_EXISTENT_CLASS_NAME = "org.bogus.DoesNotExist";
 	private static final String TEST_TARGET_INTERFACE_NAME = "MyMath";
